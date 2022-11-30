@@ -37,6 +37,7 @@
         "padded-blocks": "off",
         "@typescript-eslint/no-floating-promises":"off",
         "@typescript-eslint/no-for-in-array": "off",
-        "@typescript-eslint/restrict-plus-operands": "off"
+        "@typescript-eslint/restrict-plus-operands": "off",
+        "no-case-declarations":"off"
     }
 }

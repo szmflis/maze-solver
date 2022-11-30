@@ -1,10 +1,13 @@
 import { Reducer } from 'redux'
+import { Board } from '../../classes/Board'
+import { CellState } from '../../classes/Cell'
 import { SimulationActions } from './actions'
 import { SimulationState } from './types'
 
 const initialSimulationState: SimulationState = {
-    boardHeight: 10,
-    boardWidth: 5
+    boardHeight: 4,
+    boardWidth: 4,
+    board: new Board(4, 4)
 }
 
 export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
@@ -13,15 +16,40 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
 ) => {
     switch (action.type) {
     case 'ChangeBoardWidth':
+    {
+        const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
+        newBoard.setBoardWidth(action.newWidth)
         return {
             ...state,
-            boardWidth: action.newWidth
+            boardWidth: action.newWidth,
+            board: newBoard
         }
+    }
     case 'ChangeBoardHeight':
+    {
         return {
             ...state,
             boardHeight: action.newHeight
         }
+    }
+    case 'CheckBoardCellState':
+    {
+        const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
+        newBoard.setCellState(action.coordinate, CellState.CHECKED)
+        return {
+            ...state,
+            board: newBoard
+        }
+    }
+    case 'UncheckBoardCellState':
+    {
+        const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
+        newBoard.setCellState(action.coordinate, CellState.UNCHECKED)
+        return {
+            ...state,
+            board: newBoard
+        }
+    }
     default:
         neverReached(action)
     }
@@ -29,5 +57,4 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
 }
 
 const neverReached = (never: any): void => {
-    console.log('Reach unsupported action type in simulation reducer', never)
 }
