@@ -8,13 +8,19 @@ export const StateController: React.FC = () => {
     const boardWidth = useSelector<AppState, number>(
         (state: AppState) => state.simulationReducer.boardWidth)
 
+    const boardHeight = useSelector<AppState, number>(
+        (state: AppState) => state.simulationReducer.boardHeight)
+
     const simulationService = useSimulationService()
 
     return (
         <div>
             {boardWidth}
             <button onClick={() => simulationActionDispatcher.changeBoardWidth(boardWidth + 1)}>
-                increase!
+                increase width
+            </button>
+            <button onClick={() => simulationActionDispatcher.changeBoardHeight(boardHeight + 1)}>
+                increase height
             </button>
             <button onClick={() => simulationActionDispatcher.startSimulation()}>
                 start!

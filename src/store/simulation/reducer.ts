@@ -6,9 +6,9 @@ import { SimulationActions } from './actions'
 import { SimulationState } from './types'
 
 const initialSimulationState: SimulationState = {
-    boardHeight: 4,
-    boardWidth: 4,
-    board: new Board(4, 4),
+    boardHeight: 20,
+    boardWidth: 20,
+    board: new Board(20, 20),
     isRunning: false
 }
 
@@ -16,12 +16,12 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     state = initialSimulationState,
     action
 ) => {
+    // console.log(state.board)
     switch (action.type) {
     case 'ChangeBoardWidth':
     {
         const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
         newBoard.setBoardWidth(action.newWidth)
-        console.log('Increment!', action, state.boardWidth)
         return {
             ...state,
             boardWidth: action.newWidth,
@@ -30,15 +30,18 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     }
     case 'ChangeBoardHeight':
     {
+        const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
+        newBoard.setBoardHeight(action.newHeight)
         return {
             ...state,
-            boardHeight: action.newHeight
+            boardHeight: action.newHeight,
+            board: newBoard
         }
     }
     case 'CheckBoardCellState':
     {
         const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
-        newBoard.setCellState(action.coordinate, CellState.CHECKED)
+        newBoard.setCellState(action.coordinate, CellState.WALL)
         return {
             ...state,
             board: newBoard
@@ -47,7 +50,7 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     case 'UncheckBoardCellState':
     {
         const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
-        newBoard.setCellState(action.coordinate, CellState.UNCHECKED)
+        newBoard.setCellState(action.coordinate, CellState.AIR)
         return {
             ...state,
             board: newBoard
@@ -70,22 +73,37 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     case 'SetBoardStartPoints':
     {
         const oldBoard = state.board
-
         const rowLen = action.rowPoints.length
         const colLen = action.columnPoints.length
-        console.log('Column length: ', colLen, 'Row Length:', rowLen)
         for (let y = 0; y < colLen; y++) {
             for (let x = 0; x < rowLen; x++) {
-                console.log(action)
                 const startPoint = new Coordinate(action.columnPoints[y].x, action.rowPoints[x].y)
-                console.log(startPoint)
                 oldBoard.setStartingCoordinate(y, x, startPoint)
             }
         }
-
         return {
             ...state,
             board: oldBoard
+        }
+    }
+    case 'UnvisitEntireBoard':
+    {
+        const oldBoard = state.board
+        for (let y = 0; y < oldBoard.getBoardHeight(); y++) {
+            for (let x = 0; x < oldBoard.getBoardWidth(); x++) {
+                const startPoint = new Coordinate(x, y)
+                oldBoard.setCellState(startPoint, CellState.UNVISITED)
+            }
+        }
+        return {
+            ...state,
+            board: oldBoard
+        }
+    }
+    case 'SetBoard': {
+        return {
+            ...state,
+            board: action.board
         }
     }
     default:

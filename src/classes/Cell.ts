@@ -1,7 +1,7 @@
 import { Coordinate } from '../utils/Coordinate'
 
 export enum CellState {
-    UNCHECKED, CHECKED
+    WALL, AIR, VISITED, UNVISITED, PLAYER
 }
 
 export class Cell {
@@ -18,7 +18,6 @@ export class Cell {
     }
 
     setState (state: CellState): void {
-        console.log('Setting state to ', state)
         this.state = state
     }
 

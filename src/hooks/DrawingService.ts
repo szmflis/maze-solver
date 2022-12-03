@@ -13,12 +13,9 @@ interface DrawingServiceProps {
 
 export const useDrawingService = (props: DrawingServiceProps) => {
 
-    const simulationBoard = useSelector<AppState, Board>(
-        (state) => state.simulationReducer.board)
+    const simulationBoard = useSelector<AppState, Board>((state) => state.simulationReducer.board)
 
-    const [drawingContext, setDrawingContext] =
-        useState<CanvasRenderingContext2D | null>()
-
+    const [drawingContext, setDrawingContext] = useState<CanvasRenderingContext2D | null>()
     const [xStartPoints, setXStartPoints] = useState<Coordinate[]>()
     const [yStartPoints, setYStartPoints] = useState<Coordinate[]>()
     const [blockSide, setBlockSide] = useState<number>(0)
@@ -64,8 +61,6 @@ export const useDrawingService = (props: DrawingServiceProps) => {
 
         setXStartPoints(newXStartPoints)
         setYStartPoints(newYStartPoints)
-        console.log(newXStartPoints, xStartPoints)
-        console.log(newYStartPoints, yStartPoints)
         simulationActionDispatcher.setStartingCoordinates(newYStartPoints, newXStartPoints)
     }
 
@@ -73,16 +68,35 @@ export const useDrawingService = (props: DrawingServiceProps) => {
         for (let y = 0; y < simulationBoard.getBoardHeight(); y++) {
             for (let x = 0; x < simulationBoard.getBoardWidth(); x++) {
                 const simulationBoardCell = simulationBoard.getBoard()[y][x]
-                if (simulationBoardCell.getState() === CellState.CHECKED) {
-                    const cellStartingCoordinate = simulationBoardCell.getStartingCoordinate()
-                    cellStartingCoordinate && drawRectangle(cellStartingCoordinate)
-                }
+                const cellStartingCoordinate = simulationBoardCell.getStartingCoordinate()
+                cellStartingCoordinate &&
+                    drawRectangle(cellStartingCoordinate, simulationBoardCell.getState())
             }
         }
     }
 
-    const drawRectangle = (startPoint: Coordinate): void => {
+    const drawRectangle = (startPoint: Coordinate, cellState: CellState): void => {
         if (!drawingContext) return
+        switch (cellState) {
+        case CellState.AIR:
+            drawingContext.fillStyle = 'rgba(255, 255, 255, 0.5)'
+            break
+        case CellState.UNVISITED:
+            drawingContext.fillStyle = 'rgba(0, 0, 0, 0.71)'
+            break
+        case CellState.WALL:
+            drawingContext.fillStyle = 'rgba(0, 0, 0, 0.71)'
+            break
+        case CellState.VISITED:
+            drawingContext.fillStyle = 'rgba(255, 0, 0, 0.5)'
+            break
+        case CellState.PLAYER:
+            drawingContext.fillStyle = 'rgba(100, 100, 50, 0.5)'
+            break
+        default:
+            console.log('Reached unsuported fill style')
+        }
+
         drawingContext.fillRect(startPoint.x, startPoint.y, blockSide, blockSide)
     }
 
