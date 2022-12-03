@@ -32,12 +32,13 @@
         "react/prop-types": "off",
         "indent": ["warn", 4],
         "@typescript-eslint/indent":"off",
-        "@typescript-eslint/explicit-function-return-type": "warn",
         "@typescript-eslint/no-empty-function": "warn",
         "padded-blocks": "off",
         "@typescript-eslint/no-floating-promises":"off",
         "@typescript-eslint/no-for-in-array": "off",
         "@typescript-eslint/restrict-plus-operands": "off",
-        "no-case-declarations":"off"
+        "no-case-declarations":"off",
+        "@typescript-eslint/strict-boolean-expressions": "off",
+        "@typescript-eslint/explicit-function-return-type": "off"
     }
 }

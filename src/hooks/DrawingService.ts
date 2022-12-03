@@ -1,78 +1,105 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Board } from '../classes/Board'
 import { CellState } from '../classes/Cell'
 import { AppState } from '../store'
-import { SimulationState } from '../store/simulation/types'
+import { simulationActionDispatcher } from '../store/simulation/actions'
 import { resizeCanvas } from '../utils/CanvasUtils'
 import { Coordinate } from '../utils/Coordinate'
 
-export const useDrawingService = () => {
-    const simulationState = useSelector<AppState, SimulationState>(
-        (state) => state.simulationReducer)
+interface DrawingServiceProps {
+    drawingContext: CanvasRenderingContext2D | null
+}
 
-    const [boardCellsStartPoints, setBoardCellsStartPoints] = useState<Coordinate[][]>([])
+export const useDrawingService = (props: DrawingServiceProps) => {
+
+    const simulationBoard = useSelector<AppState, Board>(
+        (state) => state.simulationReducer.board)
+
+    const [drawingContext, setDrawingContext] =
+        useState<CanvasRenderingContext2D | null>()
+
+    const [xStartPoints, setXStartPoints] = useState<Coordinate[]>()
+    const [yStartPoints, setYStartPoints] = useState<Coordinate[]>()
     const [blockSide, setBlockSide] = useState<number>(0)
 
-    const draw = (
-        ctx: CanvasRenderingContext2D,
-        frameCount: number
-    ): void => {
-        drawEmptyBoard(ctx, simulationState.boardWidth, simulationState.boardHeight)
-        drawRectangles(ctx)
+    useEffect(() => {
+        setDrawingContext(props.drawingContext)
+    }, [props])
+
+    useEffect(() => {
+        calculateStartingPoints()
+    }, [simulationBoard.getBoardHeight(), simulationBoard.getBoardWidth()])
+
+    const draw = (): void => {
+        calculateStartingPoints()
+        drawEmptyBoard()
+        drawRectangles()
     }
 
-    const drawRectangles = (ctx: CanvasRenderingContext2D): void => {
-        for (let y = 0; y < boardCellsStartPoints.length; y++) {
-            for (let x = 0; x < boardCellsStartPoints[0].length; x++) {
-                const simulationBoardState = simulationState.board.getBoard()[y][x]
-                if (simulationBoardState.getState() === CellState.CHECKED) {
-                    drawRectangle(ctx, boardCellsStartPoints[y][x])
+    const calculateStartingPoints = () => {
+        if (!drawingContext) return
+        if (!shouldRecalculateStartingPoints()) return
+        const canvasWidth = drawingContext.canvas.width
+        const canvasHeight = drawingContext.canvas.height
+        const width = simulationBoard.getBoardWidth() + 1
+        const height = simulationBoard.getBoardHeight() + 1
+
+        const blockWidth = Math.floor(canvasWidth / width)
+        const blockheight = Math.floor(canvasHeight / height)
+        const blockSideLength = Math.min(blockWidth, blockheight)
+        setBlockSide(blockSideLength)
+
+        const newXStartPoints: Coordinate[] = []
+        for (let x = 0; x <= width * blockSideLength; x = x + blockSideLength) {
+            newXStartPoints.push(new Coordinate(x, 0))
+        }
+        const newYStartPoints: Coordinate[] = []
+        for (let y = 0; y <= height * blockSideLength; y = y + blockSideLength) {
+            newYStartPoints.push(new Coordinate(0, y))
+        }
+
+        newYStartPoints.pop()
+        newXStartPoints.pop()
+
+        setXStartPoints(newXStartPoints)
+        setYStartPoints(newYStartPoints)
+        console.log(newXStartPoints, xStartPoints)
+        console.log(newYStartPoints, yStartPoints)
+        simulationActionDispatcher.setStartingCoordinates(newYStartPoints, newXStartPoints)
+    }
+
+    const drawRectangles = (): void => {
+        for (let y = 0; y < simulationBoard.getBoardHeight(); y++) {
+            for (let x = 0; x < simulationBoard.getBoardWidth(); x++) {
+                const simulationBoardCell = simulationBoard.getBoard()[y][x]
+                if (simulationBoardCell.getState() === CellState.CHECKED) {
+                    const cellStartingCoordinate = simulationBoardCell.getStartingCoordinate()
+                    cellStartingCoordinate && drawRectangle(cellStartingCoordinate)
                 }
             }
         }
     }
 
-    const drawRectangle = (ctx: CanvasRenderingContext2D, startPoint: Coordinate): void => {
-        ctx.fillRect(startPoint.x, startPoint.y, blockSide, blockSide)
+    const drawRectangle = (startPoint: Coordinate): void => {
+        if (!drawingContext) return
+        drawingContext.fillRect(startPoint.x, startPoint.y, blockSide, blockSide)
     }
 
-    const drawEmptyBoard = (ctx: CanvasRenderingContext2D, width: number, height: number): void => {
-        const canvasWidth = ctx.canvas.width
-        const canvasHeight = ctx.canvas.height
-        width = width + 1
-        height = height + 1
+    const drawEmptyBoard = (): void => {
+        if (!drawingContext || !xStartPoints || !yStartPoints) return
 
-        const blockWidth = Math.floor(canvasWidth / width)
-        const blockheight = Math.floor(canvasHeight / height)
-        const blockSideLength = Math.min(blockWidth, blockheight)
+        const widthLeft = drawingContext.canvas.width - xStartPoints[xStartPoints.length - 1].x
+        const heightLeft = drawingContext.canvas.height - yStartPoints[yStartPoints.length - 1].y
 
-        if (blockSide !== blockSideLength) {
-            setBlockSide(blockSideLength)
-        }
-
-        const xStartPoints: Coordinate[] = []
-        for (let x = 0; x <= width * blockSideLength; x = x + blockSideLength) {
-            xStartPoints.push(new Coordinate(x, 0))
-        }
-        const yStartPoints: Coordinate[] = []
-        for (let y = 0; y <= height * blockSideLength; y = y + blockSideLength) {
-            yStartPoints.push(new Coordinate(0, y))
-        }
-
-        yStartPoints.pop()
-        xStartPoints.pop()
-
-        const widthLeft = canvasWidth - xStartPoints[xStartPoints.length - 1].x
-        const heightLeft = canvasHeight - yStartPoints[yStartPoints.length - 1].y
-
-        ctx.translate(Math.floor(widthLeft / 2), Math.floor(heightLeft / 2))
+        drawingContext.translate(Math.floor(widthLeft / 2), Math.floor(heightLeft / 2))
 
         xStartPoints.forEach(xCoord => {
             const toCoord = new Coordinate(
                 xCoord.x,
                 yStartPoints[yStartPoints.length - 1].y
             )
-            drawLine(xCoord, toCoord, ctx)
+            drawLine(xCoord, toCoord)
         })
 
         yStartPoints.forEach(yCoord => {
@@ -80,82 +107,45 @@ export const useDrawingService = () => {
                 xStartPoints[xStartPoints.length - 1].x,
                 yCoord.y
             )
-            drawLine(yCoord, toCoord, ctx)
+            drawLine(yCoord, toCoord)
         })
-
-        calculateBoardCellStartPoints(xStartPoints, yStartPoints)
     }
 
-    const calculateBoardCellStartPoints = (
-        rowPoints: Coordinate[], columnPoints: Coordinate[]
-    ): void => {
-        const boardCellStartPoints: Coordinate[][] = []
-
-        const rowLen = rowPoints.length
-        const colLen = columnPoints.length
-        for (let x = 0; x < rowLen; x++) {
-            const row: Coordinate[] = []
-            for (let y = 0; y < colLen; y++) {
-                const startPoint = new Coordinate(rowPoints[y].x, columnPoints[x].y)
-                row.push(startPoint)
-            }
-            row.pop()
-            boardCellStartPoints.push(row)
+    const shouldRecalculateStartingPoints = () => {
+        if (simulationBoard.getBoardHeight() + 1 !== yStartPoints?.length) {
+            return true
         }
-        boardCellStartPoints.pop()
-
-        // console.log(boardCellStartPoints)
-
-        if (boardCellsStartPoints.length !== boardCellStartPoints.length) {
-            console.log('Doing it')
-            setBoardCellsStartPoints(boardCellStartPoints)
+        if (simulationBoard.getBoardWidth() + 1 !== xStartPoints?.length) {
+            return true
         }
-        // const boardCellStartPoints: Coordinate[] = []
-
-        // const rowLen = rowPoints.length
-        // const colLen = columnPoints.length
-        // for (let y = 0; y < rowLen; y++) {
-        //     for (let x = 0; x < colLen; x++) {
-        //         const startPoint = new Coordinate(rowPoints[y].x, columnPoints[x].y)
-        //         boardCellStartPoints.push(startPoint)
-        //     }
-        //     boardCellStartPoints.pop()
-        // }
-
-        // for (let y = 0; y < rowLen - 1; y++) {
-        //     boardCellStartPoints.pop()
-        // }
-
-        // if (boardCellsStartPoints.length !== boardCellStartPoints.length) {
-        //     console.log('Doing it')
-        //     setBoardCellsStartPoints(boardCellStartPoints)
-        // }
+        return false
     }
 
     const drawLine = (
         from: Coordinate,
-        to: Coordinate,
-        ctx: CanvasRenderingContext2D
+        to: Coordinate
     ): void => {
-        ctx.beginPath()
-        ctx.lineWidth = 2
-        ctx.moveTo(from.x, from.y)
-        ctx.lineTo(to.x, to.y)
-        ctx.stroke()
+        if (!drawingContext) return
+        drawingContext.beginPath()
+        drawingContext.lineWidth = 2
+        drawingContext.moveTo(from.x, from.y)
+        drawingContext.lineTo(to.x, to.y)
+        drawingContext.stroke()
     }
 
     const predraw = (
-        context: CanvasRenderingContext2D,
         canvas: HTMLCanvasElement
     ): void => {
-        context.save()
+        if (!drawingContext) return
+        drawingContext.save()
         resizeCanvas(canvas)
         const { width, height } = canvas
-        context.clearRect(0, 0, width, height)
+        drawingContext.clearRect(0, 0, width, height)
     }
 
-    const postdraw = (ctx: CanvasRenderingContext2D): void => {
-        ctx.restore()
+    const postdraw = (): void => {
+        if (!drawingContext) return
+        drawingContext.restore()
     }
 
     return {

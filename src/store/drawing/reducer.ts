@@ -4,7 +4,8 @@ import { DrawingActions } from './actions'
 import { DrawingState } from './types'
 
 const initialDrawingState: DrawingState = {
-    drawingBoard: new DrawingBoard([])
+    drawingBoard: new DrawingBoard([]),
+    blockSideInPx: 20
 }
 
 export const drawingReducer: Reducer<DrawingState, DrawingActions> = (
@@ -17,6 +18,13 @@ export const drawingReducer: Reducer<DrawingState, DrawingActions> = (
         return {
             ...state,
             drawingBoard: action.newDrawingBoard
+        }
+    }
+    case 'ChangeBlockSizeInPx':
+    {
+        return {
+            ...state,
+            blockSideInPx: action.newSize
         }
     }
     default:

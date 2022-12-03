@@ -16,6 +16,12 @@ export const StateController: React.FC = () => {
             <button onClick={() => simulationActionDispatcher.changeBoardWidth(boardWidth + 1)}>
                 increase!
             </button>
+            <button onClick={() => simulationActionDispatcher.startSimulation()}>
+                start!
+            </button>
+            <button onClick={() => simulationActionDispatcher.stopSimulation()}>
+                stop!
+            </button>
         </div>
     )
 }

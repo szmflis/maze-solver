@@ -35,12 +35,10 @@ export class Board {
             }
             newBoard.push(row)
         }
-        console.log(newBoard)
         this.board = newBoard
     }
 
     setCellState (coordinate: Coordinate, state: CellState): void {
-        console.log('Checking state: ', coordinate)
         if (coordinate.y > this.getBoardHeight()) {
             console.log('setCellState() ', coordinate.y,
                 ' outside of board height ', this.board.length)
@@ -51,6 +49,7 @@ export class Board {
                 ' outside of board width ', this.board[0].length)
             return
         }
+        console.log('y: ', coordinate.y, 'x: ', coordinate.x)
         this.board[coordinate.y][coordinate.x].setState(state)
     }
 
@@ -60,6 +59,14 @@ export class Board {
         } else {
             return null
         }
+    }
+
+    getStartingCoordinateAt (height: number, width: number): Coordinate | null {
+        return this.board[height][width].getStartingCoordinate()
+    }
+
+    setStartingCoordinate (height: number, width: number, coordinate: Coordinate): void {
+        this.getBoardStateAt(height, width)?.setStartingCoordinate(coordinate)
     }
 
     getBoardWidth (): number {
