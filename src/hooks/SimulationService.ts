@@ -14,7 +14,11 @@ export const useSimulationService = () => {
 
     useInterval(() => {
         printSimulationBoard(mazeGen)
-    }, simulationState.isRunning ? 100 : null)
+    }, simulationState.isRunning ? 10 : null)
+
+    useEffect(() => {
+        setMazeGen(new MazeGenerator(simulationState.board))
+    }, [simulationState.board])
 
     const printSimulationBoard = (mazeGenerator: MazeGenerator) => {
         if (steps === 0) {

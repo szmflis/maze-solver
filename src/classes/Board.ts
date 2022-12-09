@@ -26,7 +26,7 @@ export class Board {
         for (let y = 0; y < this.getBoardHeight(); y++) {
             const row: Cell[] = []
             for (let x = 0; x < newWidth; x++) {
-                const existingState = this.getBoardStateAt(x, y)
+                const existingState = this.getBoardCellAt(x, y)
                 if (existingState != null) {
                     row.push(existingState)
                 } else {
@@ -43,7 +43,7 @@ export class Board {
         for (let y = 0; y < newHeight; y++) {
             const row: Cell[] = []
             for (let x = 0; x < this.getBoardWidth(); x++) {
-                const existingState = this.getBoardStateAt(x, y)
+                const existingState = this.getBoardCellAt(x, y)
                 if (existingState != null) {
                     row.push(existingState)
                 } else {
@@ -69,15 +69,15 @@ export class Board {
         this.board[coordinate.y][coordinate.x].setState(state)
     }
 
-    setAllCellsToWalls (): void {
-        for (let y = 0; y < this.getBoardHeight(); y++) {
-            for (let x = 0; x < this.getBoardWidth(); x++) {
-                this.setCellState(new Coordinate(x, y), CellState.WALL)
-            }
-        }
-    }
+    // setAllCellsToWalls (): void {
+    //     for (let y = 0; y < this.getBoardHeight(); y++) {
+    //         for (let x = 0; x < this.getBoardWidth(); x++) {
+    //             this.setCellState(new Coordinate(x, y), CellState.WALL)
+    //         }
+    //     }
+    // }
 
-    getBoardStateAt (x: number, y: number): Cell | null {
+    getBoardCellAt (x: number, y: number): Cell | null {
         if ((x < this.getBoardWidth() && x >= 0) && (y < this.getBoardHeight() && y >= 0)) {
             return this.board[y][x]
         } else {
@@ -90,7 +90,7 @@ export class Board {
     }
 
     setStartingCoordinate (height: number, width: number, coordinate: Coordinate): void {
-        this.getBoardStateAt(height, width)?.setStartingCoordinate(coordinate)
+        this.getBoardCellAt(height, width)?.setStartingCoordinate(coordinate)
     }
 
     getBoardWidth (): number {
@@ -104,4 +104,37 @@ export class Board {
     getBoard (): Cell[][] {
         return this.board
     }
+
+    getBoardWidthInPx (): number {
+        const lastXCoordinate = this.board[this.getBoardHeight() - 1][this.getBoardWidth() - 1]
+            .getStartingCoordinate()
+        return lastXCoordinate
+            ? lastXCoordinate.x
+            : 0
+    }
+
+    getBoardHeightInPx (): number {
+        const lastYCoordinate = this.board[this.getBoardHeight() - 1][this.getBoardWidth() - 1]
+            .getStartingCoordinate()
+        return lastYCoordinate
+            ? lastYCoordinate.y
+            : 0
+    }
+
+    removeLeftWall (coord: Coordinate) {
+        this.board[coord.y][coord.x].removeWall(3)
+    }
+
+    removeRightWall (coord: Coordinate) {
+        this.board[coord.y][coord.x].removeWall(1)
+    }
+
+    removeTopWall (coord: Coordinate) {
+        this.board[coord.y][coord.x].removeWall(0)
+    }
+
+    removeBottomWall (coord: Coordinate) {
+        this.board[coord.y][coord.x].removeWall(2)
+    }
+
 }

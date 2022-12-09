@@ -6,9 +6,9 @@ import { SimulationActions } from './actions'
 import { SimulationState } from './types'
 
 const initialSimulationState: SimulationState = {
-    boardHeight: 20,
-    boardWidth: 20,
-    board: new Board(20, 20),
+    boardHeight: 10,
+    boardWidth: 10,
+    board: new Board(10, 10),
     isRunning: false
 }
 
@@ -41,7 +41,7 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     case 'CheckBoardCellState':
     {
         const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
-        newBoard.setCellState(action.coordinate, CellState.WALL)
+        newBoard.setCellState(action.coordinate, CellState.VISITED)
         return {
             ...state,
             board: newBoard

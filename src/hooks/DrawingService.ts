@@ -16,8 +16,6 @@ export const useDrawingService = (props: DrawingServiceProps) => {
     const simulationBoard = useSelector<AppState, Board>((state) => state.simulationReducer.board)
 
     const [drawingContext, setDrawingContext] = useState<CanvasRenderingContext2D | null>()
-    const [xStartPoints, setXStartPoints] = useState<Coordinate[]>()
-    const [yStartPoints, setYStartPoints] = useState<Coordinate[]>()
     const [blockSide, setBlockSide] = useState<number>(0)
 
     useEffect(() => {
@@ -32,6 +30,77 @@ export const useDrawingService = (props: DrawingServiceProps) => {
         calculateStartingPoints()
         drawEmptyBoard()
         drawRectangles()
+    }
+
+    const drawRectangles = (): void => {
+        for (let y = 0; y < simulationBoard.getBoardHeight(); y++) {
+            for (let x = 0; x < simulationBoard.getBoardWidth(); x++) {
+                const simulationBoardCell = simulationBoard.getBoard()[y][x]
+                const cellStartingCoordinate = simulationBoardCell.getStartingCoordinate()
+                cellStartingCoordinate &&
+                    drawRectangle(cellStartingCoordinate, simulationBoardCell.getState())
+            }
+        }
+    }
+
+    const drawRectangle = (startPoint: Coordinate, cellState: CellState): void => {
+        if (!drawingContext) return
+        switch (cellState) {
+        case CellState.AIR:
+            drawingContext.fillStyle = 'rgba(255, 255, 255, 0.5)'
+            break
+        case CellState.UNVISITED:
+            drawingContext.fillStyle = 'rgba(0, 0, 0, 0.41)'
+            break
+        case CellState.VISITED:
+            drawingContext.fillStyle = 'rgba(100, 100, 50, 0.5)'
+            break
+        case CellState.PLAYER:
+            drawingContext.fillStyle = 'rgba(255, 0, 0, 0.5)'
+            break
+        default:
+            console.log('Reached unsuported fill style')
+        }
+
+        drawingContext.fillRect(startPoint.x, startPoint.y, blockSide, blockSide)
+    }
+
+    const drawEmptyBoard = (): void => {
+
+        if (!drawingContext) return
+
+        const widthLeft = drawingContext.canvas.width - (simulationBoard.getBoardWidthInPx() + blockSide)
+        const heightLeft = drawingContext.canvas.height - (simulationBoard.getBoardHeightInPx() + blockSide)
+
+        drawingContext.translate(Math.floor(widthLeft / 2), Math.floor(heightLeft / 2))
+
+        simulationBoard.getBoard().forEach(row => {
+            row.forEach(cell => {
+                const walls = cell.getWalls()
+                const startingCoordinate = cell.getStartingCoordinate()
+                if (!startingCoordinate) return
+                if (walls[0]) {
+                    const fromCoor = startingCoordinate
+                    const toCoord = new Coordinate(startingCoordinate.x + blockSide, startingCoordinate.y)
+                    drawLine(fromCoor, toCoord)
+                }
+                if (walls[1]) {
+                    const fromCoor = new Coordinate(startingCoordinate.x + blockSide, startingCoordinate.y)
+                    const toCoord = new Coordinate(startingCoordinate.x + blockSide, startingCoordinate.y + blockSide)
+                    drawLine(fromCoor, toCoord)
+                }
+                if (walls[2]) {
+                    const fromCoor = new Coordinate(startingCoordinate.x, startingCoordinate.y + blockSide)
+                    const toCoord = new Coordinate(startingCoordinate.x + blockSide, startingCoordinate.y + blockSide)
+                    drawLine(fromCoor, toCoord)
+                }
+                if (walls[3]) {
+                    const fromCoor = startingCoordinate
+                    const toCoord = new Coordinate(startingCoordinate.x, startingCoordinate.y + blockSide)
+                    drawLine(fromCoor, toCoord)
+                }
+            })
+        })
     }
 
     const calculateStartingPoints = () => {
@@ -59,77 +128,14 @@ export const useDrawingService = (props: DrawingServiceProps) => {
         newYStartPoints.pop()
         newXStartPoints.pop()
 
-        setXStartPoints(newXStartPoints)
-        setYStartPoints(newYStartPoints)
         simulationActionDispatcher.setStartingCoordinates(newYStartPoints, newXStartPoints)
     }
 
-    const drawRectangles = (): void => {
-        for (let y = 0; y < simulationBoard.getBoardHeight(); y++) {
-            for (let x = 0; x < simulationBoard.getBoardWidth(); x++) {
-                const simulationBoardCell = simulationBoard.getBoard()[y][x]
-                const cellStartingCoordinate = simulationBoardCell.getStartingCoordinate()
-                cellStartingCoordinate &&
-                    drawRectangle(cellStartingCoordinate, simulationBoardCell.getState())
-            }
-        }
-    }
-
-    const drawRectangle = (startPoint: Coordinate, cellState: CellState): void => {
-        if (!drawingContext) return
-        switch (cellState) {
-        case CellState.AIR:
-            drawingContext.fillStyle = 'rgba(255, 255, 255, 0.5)'
-            break
-        case CellState.UNVISITED:
-            drawingContext.fillStyle = 'rgba(0, 0, 0, 0.71)'
-            break
-        case CellState.WALL:
-            drawingContext.fillStyle = 'rgba(0, 0, 0, 0.71)'
-            break
-        case CellState.VISITED:
-            drawingContext.fillStyle = 'rgba(255, 0, 0, 0.5)'
-            break
-        case CellState.PLAYER:
-            drawingContext.fillStyle = 'rgba(100, 100, 50, 0.5)'
-            break
-        default:
-            console.log('Reached unsuported fill style')
-        }
-
-        drawingContext.fillRect(startPoint.x, startPoint.y, blockSide, blockSide)
-    }
-
-    const drawEmptyBoard = (): void => {
-        if (!drawingContext || !xStartPoints || !yStartPoints) return
-
-        const widthLeft = drawingContext.canvas.width - xStartPoints[xStartPoints.length - 1].x
-        const heightLeft = drawingContext.canvas.height - yStartPoints[yStartPoints.length - 1].y
-
-        drawingContext.translate(Math.floor(widthLeft / 2), Math.floor(heightLeft / 2))
-
-        xStartPoints.forEach(xCoord => {
-            const toCoord = new Coordinate(
-                xCoord.x,
-                yStartPoints[yStartPoints.length - 1].y
-            )
-            drawLine(xCoord, toCoord)
-        })
-
-        yStartPoints.forEach(yCoord => {
-            const toCoord = new Coordinate(
-                xStartPoints[xStartPoints.length - 1].x,
-                yCoord.y
-            )
-            drawLine(yCoord, toCoord)
-        })
-    }
-
     const shouldRecalculateStartingPoints = () => {
-        if (simulationBoard.getBoardHeight() + 1 !== yStartPoints?.length) {
+        if (simulationBoard.getBoardHeight() + 1 !== simulationBoard.getBoard().length) {
             return true
         }
-        if (simulationBoard.getBoardWidth() + 1 !== xStartPoints?.length) {
+        if (simulationBoard.getBoardWidth() + 1 !== simulationBoard.getBoard()[0].length) {
             return true
         }
         return false
