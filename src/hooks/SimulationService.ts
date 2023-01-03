@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { MazeGenerator } from '../classes/MazeGenerator'
 import { AppState } from '../store'
 import { simulationActionDispatcher } from '../store/simulation/actions'
-import { Coordinate } from '../utils/Coordinate'
 import { useInterval } from './useInterval'
 
 export const useSimulationService = () => {

@@ -47,16 +47,16 @@ export const useDrawingService = (props: DrawingServiceProps) => {
         if (!drawingContext) return
         switch (cellState) {
         case CellState.AIR:
-            drawingContext.fillStyle = 'rgba(255, 255, 255, 0.5)'
+            drawingContext.fillStyle = 'rgba(222, 222, 222, 0.5)'
             break
         case CellState.UNVISITED:
-            drawingContext.fillStyle = 'rgba(0, 0, 0, 0.41)'
+            drawingContext.fillStyle = 'rgba(9, 0, 89, 0.5)'
             break
         case CellState.VISITED:
-            drawingContext.fillStyle = 'rgba(100, 100, 50, 0.5)'
+            drawingContext.fillStyle = 'rgba(28, 186, 70, 0.5)'
             break
         case CellState.PLAYER:
-            drawingContext.fillStyle = 'rgba(255, 0, 0, 0.5)'
+            drawingContext.fillStyle = 'rgba(25, 0, 255, 0.5)'
             break
         default:
             console.log('Reached unsuported fill style')

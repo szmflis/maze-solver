@@ -1,3 +1,6 @@
-export enum Direction {
-    UP = 'UP', DOWN = 'DOWN', LEFT = 'LEFT', RIGHT = 'RIGHT'
+import { Cell } from '../classes/Cell'
+
+export interface Direction {
+    direction: 'LEFT' | 'RIGHT' | 'TOP' | 'BOTTOM'
+    cell: Cell | null
 }
