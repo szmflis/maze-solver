@@ -5,4 +5,6 @@ export interface SimulationState {
     readonly boardHeight: number
     readonly board: Board
     readonly isRunning: boolean
+    readonly simulationStep: number
+    readonly mazeGenerationAlgorithm: 'BINARY_SEARCH' | 'DEPTH_FIRST'
 }

@@ -56,7 +56,13 @@ export const useDrawingService = (props: DrawingServiceProps) => {
             drawingContext.fillStyle = 'rgba(28, 186, 70, 0.5)'
             break
         case CellState.PLAYER:
-            drawingContext.fillStyle = 'rgba(25, 0, 255, 0.5)'
+            drawingContext.fillStyle = 'rgba(255, 247, 0, 0.8)'
+            break
+        case CellState.ENTRY:
+            drawingContext.fillStyle = 'rgba(50, 0, 255, 0.5)'
+            break
+        case CellState.EXIT:
+            drawingContext.fillStyle = 'rgba(255, 0, 0, 0.5)'
             break
         default:
             console.log('Reached unsuported fill style')

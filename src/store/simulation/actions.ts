@@ -1,7 +1,7 @@
 import { Action, bindActionCreators } from 'redux'
 import store from '..'
 import { Board } from '../../classes/Board'
-import { Cell } from '../../classes/Cell'
+import { Cell, CellState } from '../../classes/Cell'
 import { Coordinate } from '../../utils/Coordinate'
 
 interface ChangeBoardWidthAction extends Action<'ChangeBoardWidth'> {
@@ -29,6 +29,17 @@ interface CheckBoardCellStateAction extends Action<'CheckBoardCellState'> {
 const checkBoardCellState = (coordinate: Coordinate): CheckBoardCellStateAction => ({
     type: 'CheckBoardCellState',
     coordinate
+})
+
+interface SetBoardCellStateAction extends Action<'SetBoardCellState'> {
+    coordinate: Coordinate
+    newState: CellState
+}
+
+const setBoardCellState = (coordinate: Coordinate, newState: CellState): SetBoardCellStateAction => ({
+    type: 'SetBoardCellState',
+    coordinate,
+    newState
 })
 
 interface UncheckBoardCellStateAction extends Action<'UncheckBoardCellState'> {
@@ -80,6 +91,38 @@ const setBoard = (board: Board): SetBoardAction => ({
     board
 })
 
+interface ResetSimulationAction extends Action<'ResetSimulation'> {
+    type: 'ResetSimulation'
+}
+
+const resetSimulation = (): ResetSimulationAction => ({
+    type: 'ResetSimulation'
+})
+
+interface IncrementSimulationStepAction extends Action<'IncrementSimulationStep'> {
+    type: 'IncrementSimulationStep'
+}
+
+const incrementSimulationStep = (): IncrementSimulationStepAction => ({
+    type: 'IncrementSimulationStep'
+})
+
+interface FinishSimulationAction extends Action<'FinishSimulation'> {
+    type: 'FinishSimulation'
+}
+
+const finishSimulation = (): FinishSimulationAction => ({
+    type: 'FinishSimulation'
+})
+
+interface SetMazeGenerationAction extends Action<'SetMazeGeneration'> {
+    type: 'SetMazeGeneration'
+}
+
+const setMazeGeneration = (): SetMazeGenerationAction => ({
+    type: 'SetMazeGeneration'
+})
+
 export type SimulationActions = ChangeBoardHeightAction
     | ChangeBoardWidthAction
     | CheckBoardCellStateAction
@@ -89,6 +132,11 @@ export type SimulationActions = ChangeBoardHeightAction
     | SetBoardStartPointsAction
     | UnvisitEntireBoardAction
     | SetBoardAction
+    | ResetSimulationAction
+    | IncrementSimulationStepAction
+    | FinishSimulationAction
+    | SetBoardCellStateAction
+    | SetMazeGenerationAction
 
 export const simulationActionDispatcher = bindActionCreators(
     {
@@ -100,7 +148,12 @@ export const simulationActionDispatcher = bindActionCreators(
         stopSimulation,
         setStartingCoordinates,
         checkEntireBoard,
-        setBoard
+        setBoard,
+        resetSimulation,
+        incrementSimulationStep,
+        finishSimulation,
+        setBoardCellState,
+        setMazeGeneration
     },
     store.dispatch
 )

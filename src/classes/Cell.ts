@@ -1,7 +1,7 @@
 import { Coordinate } from '../utils/Coordinate'
 
 export enum CellState {
-    AIR, VISITED, UNVISITED, PLAYER
+    AIR, VISITED, UNVISITED, PLAYER, ENTRY, EXIT
 }
 
 export class Cell {

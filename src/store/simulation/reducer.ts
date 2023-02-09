@@ -2,6 +2,7 @@ import { Reducer } from 'redux'
 import { Board } from '../../classes/Board'
 import { CellState } from '../../classes/Cell'
 import { Coordinate } from '../../utils/Coordinate'
+import { getRandomNumberInRange } from '../../utils/GeneratorUtils'
 import { SimulationActions } from './actions'
 import { SimulationState } from './types'
 
@@ -9,14 +10,15 @@ const initialSimulationState: SimulationState = {
     boardHeight: 10,
     boardWidth: 10,
     board: new Board(10, 10),
-    isRunning: false
+    isRunning: false,
+    simulationStep: 0,
+    mazeGenerationAlgorithm: 'BINARY_SEARCH'
 }
 
 export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     state = initialSimulationState,
     action
 ) => {
-    // console.log(state.board)
     switch (action.type) {
     case 'ChangeBoardWidth':
     {
@@ -51,6 +53,15 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     {
         const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
         newBoard.setCellState(action.coordinate, CellState.AIR)
+        return {
+            ...state,
+            board: newBoard
+        }
+    }
+    case 'SetBoardCellState':
+    {
+        const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
+        newBoard.setCellState(action.coordinate, action.newState)
         return {
             ...state,
             board: newBoard
@@ -104,6 +115,45 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
         return {
             ...state,
             board: action.board
+        }
+    }
+    case 'ResetSimulation': {
+        const boardHeight = state.boardHeight
+        const boardWidth = state.boardWidth
+        const board = new Board(boardWidth, boardHeight)
+        return {
+            ...initialSimulationState,
+            board,
+            boardHeight,
+            boardWidth
+        }
+    }
+    case 'IncrementSimulationStep': {
+        return {
+            ...state,
+            simulationStep: state.simulationStep + 1
+        }
+    }
+    case 'FinishSimulation': {
+        const newBoard = state.board
+        newBoard.setCellState(
+            new Coordinate(getRandomNumberInRange(0, state.boardWidth), getRandomNumberInRange(0, state.boardHeight)),
+            CellState.ENTRY
+        )
+        newBoard.setCellState(
+            new Coordinate(getRandomNumberInRange(0, state.boardWidth), getRandomNumberInRange(0, state.boardHeight)),
+            CellState.EXIT
+        )
+        const playerCoordinates = newBoard.getCoordinatesOfCellState(CellState.PLAYER)
+        if (playerCoordinates) {
+            newBoard.setCellState(
+                playerCoordinates,
+                CellState.AIR
+            )
+        }
+        return {
+            ...state,
+            isRunning: false
         }
     }
     default:

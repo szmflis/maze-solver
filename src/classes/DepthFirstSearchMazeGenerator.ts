@@ -1,17 +1,18 @@
 import { Direction } from '../enums/Direction'
+import { MazeGenerator } from '../hooks/SimulationRunnerService'
+import { simulationActionDispatcher } from '../store/simulation/actions'
 import { Coordinate } from '../utils/Coordinate'
-import { getRandomDirectionFrom } from '../utils/GeneratorUtils'
+import { getRandomDirectionFrom, getRandomNumberInRange } from '../utils/GeneratorUtils'
 import { Board } from './Board'
 import { CellState } from './Cell'
 
-export class MazeGenerator {
+export class DepthFirstSearchMazeGenerator implements MazeGenerator {
     private readonly simulationBoard: Board
     private position: Coordinate
 
-    constructor (board: Board) {
+    constructor (board: Board, startingPosition: Coordinate) {
         this.simulationBoard = board
-        this.simulationBoard.setCellState(new Coordinate(0, 0), CellState.PLAYER)
-        this.position = new Coordinate(0, 0)
+        this.position = startingPosition
     }
 
     public step (): Board {
@@ -22,16 +23,27 @@ export class MazeGenerator {
     generateNewBoard (fromCoord: Coordinate) {
         const allDirections = this.getAllDirections(fromCoord)
         const availableUnvisitedDirections = this.getUnvisitedDirecitons(allDirections)
+        console.log(availableUnvisitedDirections)
 
         if (availableUnvisitedDirections.length === 0) {
             const availableVisitedDirections = this.getVisitedDirections(allDirections)
-            this.moveBackToVisitedDirection(fromCoord, availableVisitedDirections)
+            if (availableVisitedDirections.length === 0) {
+                this.finishGeneration()
+            } else {
+                this.moveBackToVisitedDirection(fromCoord, availableVisitedDirections)
+            }
         } else {
             this.moveToUnvisitedDirection(fromCoord, availableUnvisitedDirections)
         }
     }
 
+    finishGeneration () {
+        console.log('generation finished')
+        simulationActionDispatcher.finishSimulation()
+    }
+
     moveToUnvisitedDirection (fromCoord: Coordinate, availableUnvisitedDirections: Direction[]) {
+
         const randomDirection = getRandomDirectionFrom(availableUnvisitedDirections)
         if (randomDirection.direction === 'LEFT') {
             const nextCoord = new Coordinate(fromCoord.x - 1, fromCoord.y)
@@ -64,9 +76,9 @@ export class MazeGenerator {
             const nextCoord = new Coordinate(fromCoord.x, fromCoord.y + 1)
             this.simulationBoard.removeBottomWall(this.position)
             this.simulationBoard.removeTopWall(nextCoord)
-            this.simulationBoard.setCellState(this.position, CellState.VISITED)
+            this.simulationBoard.setCellState(this.position, CellState.VISITED, true)
+            this.simulationBoard.setCellState(nextCoord, CellState.PLAYER, true)
             this.position = nextCoord
-            this.simulationBoard.setCellState(this.position, CellState.PLAYER)
         }
     }
 
