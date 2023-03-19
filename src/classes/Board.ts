@@ -108,6 +108,10 @@ export class Board {
         return this.board
     }
 
+    getBoardCopy (): Board {
+        return new Board(this.getBoardWidth(), this.getBoardHeight(), this.getBoard())
+    }
+
     getBoardWidthInPx (): number {
         const lastXCoordinate = this.board[this.getBoardHeight() - 1][this.getBoardWidth() - 1]
             .getStartingCoordinate()

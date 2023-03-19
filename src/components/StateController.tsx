@@ -1,15 +1,19 @@
+import { stat } from 'fs'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Board } from '../classes/Board'
-import { useSimulationRunnerService } from '../hooks/SimulationRunnerService'
+import { useBinaryTreeMazeGenerator } from '../mazeGenerators/BinaryTreeMazeGenerator'
 import { AppState } from '../store'
+import { boardActionDispatcher } from '../store/board/actions'
 import { simulationActionDispatcher } from '../store/simulation/actions'
+import { Coordinate } from '../utils/Coordinate'
 
 export const StateController: React.FC = () => {
 
     const simulationState = useSelector((state: AppState) => state.simulationReducer)
+    const boardState = useSelector((state: AppState) => state.boardReducer)
 
-    const simulationService = useSimulationRunnerService()
+    const simulationService = useBinaryTreeMazeGenerator(new Coordinate(0, 0))
 
     const test = () => {
         simulationActionDispatcher.resetSimulation()
@@ -25,13 +29,13 @@ export const StateController: React.FC = () => {
     return (
         <div>
             <button
-                onClick={() => simulationActionDispatcher.changeBoardWidth(simulationState.boardWidth + 20)}
+                onClick={() => boardActionDispatcher.changeBoardWidth(boardState.boardWidth + 20)}
                 disabled={shouldDisableSizeAdjustments()}
             >
                 increase width
             </button>
             <button
-                onClick={() => simulationActionDispatcher.changeBoardHeight(simulationState.boardHeight + 20)}
+                onClick={() => boardActionDispatcher.changeBoardHeight(boardState.boardHeight + 20)}
                 disabled={shouldDisableSizeAdjustments()}
             >
                 increase height

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Board } from '../classes/Board'
 import { CellState } from '../classes/Cell'
 import { AppState } from '../store'
-import { simulationActionDispatcher } from '../store/simulation/actions'
+import { boardActionDispatcher } from '../store/board/actions'
 import { resizeCanvas } from '../utils/CanvasUtils'
 import { Coordinate } from '../utils/Coordinate'
 
@@ -13,7 +13,7 @@ interface DrawingServiceProps {
 
 export const useDrawingService = (props: DrawingServiceProps) => {
 
-    const simulationBoard = useSelector<AppState, Board>((state) => state.simulationReducer.board)
+    const simulationBoard = useSelector<AppState, Board>((state) => state.boardReducer.board)
 
     const [drawingContext, setDrawingContext] = useState<CanvasRenderingContext2D | null>()
     const [blockSide, setBlockSide] = useState<number>(0)
@@ -134,7 +134,7 @@ export const useDrawingService = (props: DrawingServiceProps) => {
         newYStartPoints.pop()
         newXStartPoints.pop()
 
-        simulationActionDispatcher.setStartingCoordinates(newYStartPoints, newXStartPoints)
+        boardActionDispatcher.setStartingCoordinates(newYStartPoints, newXStartPoints)
     }
 
     const shouldRecalculateStartingPoints = () => {
