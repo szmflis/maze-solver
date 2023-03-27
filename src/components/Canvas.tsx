@@ -10,7 +10,7 @@ const CanvasContainer = styled(FlexBox)`
     border-radius: 2%/4%;
     overflow: hidden;
     box-shadow: ${theme.shadows.mdShadow_1};
-    background-color: ${theme.colors.backgroundLightest};
+    background-color: ${theme.colors.surfaceLight};
 `
 
 export const SimulationCanvas: React.FC = () => {

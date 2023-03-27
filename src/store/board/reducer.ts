@@ -15,7 +15,7 @@ export const boardReducer: Reducer<BoardState, BoardActions> = (
     state = boardState,
     action
 ) => {
-    console.log('Im here!', action.type)
+    // console.log('Im here!', action.type)
     switch (action.type) {
     case 'ChangeBoardWidth':
     {

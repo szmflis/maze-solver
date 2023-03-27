@@ -23,8 +23,7 @@ export const useBinaryTreeMazeGenerator = (
         if (simulationState.simulationStep === 0) {
             boardActionDispatcher.checkEntireBoard()
         }
-        generateNewBoard()
-        // simulationActionDispatcher.setBoard(board)
+        boardActionDispatcher.setBoard(generateNewBoard())
         simulationActionDispatcher.incrementSimulationStep()
     }
 

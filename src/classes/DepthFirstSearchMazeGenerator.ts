@@ -1,188 +1,267 @@
-// import { Direction } from '../enums/Direction'
-// import { MazeGenerator } from '../hooks/SimulationRunnerService'
-// import { simulationActionDispatcher } from '../store/simulation/actions'
-// import { Coordinate } from '../utils/Coordinate'
-// import { getRandomDirectionFrom, getRandomNumberInRange } from '../utils/GeneratorUtils'
-// import { Board } from './Board'
-// import { CellState } from './Cell'
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { Direction } from '../enums/Direction'
+import { useInterval } from '../hooks/useInterval'
+import { AppState } from '../store'
+import { boardActionDispatcher } from '../store/board/actions'
+import { simulationActionDispatcher } from '../store/simulation/actions'
+import { statisticsActionDispatcher } from '../store/statistics/actions'
+import { Coordinate } from '../utils/Coordinate'
+import { getRandomDirectionFrom } from '../utils/GeneratorUtils'
+import { Board } from './Board'
+import { CellState } from './Cell'
+import { Step } from './Step'
+import { StepStack } from './StepStack'
 
-// export class DepthFirstSearchMazeGenerator implements MazeGenerator {
-//     private readonly simulationBoard: Board
-//     private position: Coordinate
+export const useDepthFirstSearchMazeGenerator = (
+    initPosition: Coordinate
+) => {
+    const [position, setPosition] = useState<Coordinate>(initPosition)
+    const simulationState = useSelector((state: AppState) => state.simulationReducer)
+    const simulationBoard = useSelector((state: AppState) => state.boardReducer.board)
 
-//     constructor (board: Board, startingPosition: Coordinate) {
-//         this.simulationBoard = board
-//         this.position = startingPosition
-//     }
+    const stepStack = new StepStack()
 
-//     public step (): Board {
-//         this.generateNewBoard(this.position)
-//         return this.simulationBoard
-//     }
+    useInterval(() => {
+        step()
+    }, simulationState.isRunning ? 1 : null)
 
-//     generateNewBoard (fromCoord: Coordinate) {
-//         const allDirections = this.getAllDirections(fromCoord)
-//         const availableUnvisitedDirections = this.getUnvisitedDirecitons(allDirections)
-//         console.log(availableUnvisitedDirections)
+    const step = (): void => {
+        if (simulationState.simulationStep === 0) {
+            boardActionDispatcher.checkEntireBoard()
+        }
+        stepStack.clearSteps()
+        generateNewBoard(position)
+        simulationActionDispatcher.incrementSimulationStep()
+        statisticsActionDispatcher.addStepStack(stepStack)
+        console.log(stepStack)
+    }
 
-//         if (availableUnvisitedDirections.length === 0) {
-//             const availableVisitedDirections = this.getVisitedDirections(allDirections)
-//             if (availableVisitedDirections.length === 0) {
-//                 this.finishGeneration()
-//             } else {
-//                 this.moveBackToVisitedDirection(fromCoord, availableVisitedDirections)
-//             }
-//         } else {
-//             this.moveToUnvisitedDirection(fromCoord, availableUnvisitedDirections)
-//         }
-//     }
+    const generateNewBoard = (fromCoord: Coordinate) => {
+        let newBoard = new Board(
+            simulationBoard.getBoardWidth(),
+            simulationBoard.getBoardHeight(),
+            simulationBoard.getBoard())
 
-//     finishGeneration () {
-//         console.log('generation finished')
-//         simulationActionDispatcher.finishSimulation()
-//     }
+        const allDirections = getAllDirections(fromCoord)
+        stepStack.addStep(new Step(
+            'SEARCH',
+            `Found ${allDirections.length} possible directions: ${allDirections.join(' ')}`))
+        const availableUnvisitedDirections = getUnvisitedDirecitons(allDirections)
+        stepStack.addStep(new Step(
+            'SEARCH',
+            `Unvisited directions: ${availableUnvisitedDirections.join(' ')}`))
+        if (availableUnvisitedDirections.length === 0) {
+            stepStack.addStep(new Step('SEARCH', 'Found no unvisited directions'))
+            const availableVisitedDirections = getVisitedDirections(allDirections)
+            stepStack.addStep(new Step('SEARCH',
+                `Found ${availableVisitedDirections.length} visited directions directions`))
+            if (availableVisitedDirections.length === 0) {
+                stepStack.addStep(new Step('FINISHED', 'Finished generation'))
+                finishGeneration()
+            } else {
+                newBoard = moveBackToVisitedDirection(fromCoord, availableVisitedDirections, newBoard)
+            }
+        } else {
+            newBoard = moveToUnvisitedDirection(fromCoord, availableUnvisitedDirections, newBoard)
+        }
+        boardActionDispatcher.setBoard(newBoard)
+    }
 
-//     moveToUnvisitedDirection (fromCoord: Coordinate, availableUnvisitedDirections: Direction[]) {
+    const finishGeneration = () => {
+        console.log('generation finished')
+        simulationActionDispatcher.finishSimulation()
+    }
 
-//         const randomDirection = getRandomDirectionFrom(availableUnvisitedDirections)
-//         if (randomDirection.direction === 'LEFT') {
-//             const nextCoord = new Coordinate(fromCoord.x - 1, fromCoord.y)
-//             this.simulationBoard.removeLeftWall(this.position)
-//             this.simulationBoard.removeRightWall(nextCoord)
-//             this.simulationBoard.setCellState(this.position, CellState.VISITED)
-//             this.position = nextCoord
-//             this.simulationBoard.setCellState(this.position, CellState.PLAYER)
-//         }
+    const moveToUnvisitedDirection = (
+        fromCoord: Coordinate,
+        availableUnvisitedDirections: Direction[],
+        inputBoard: Board
+    ): Board => {
+        const randomDirection = getRandomDirectionFrom(availableUnvisitedDirections)
+        if (randomDirection.direction === 'LEFT') {
+            const nextCoord = new Coordinate(fromCoord.x - 1, fromCoord.y)
+            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
+            inputBoard.removeLeftWall(position)
+            inputBoard.removeRightWall(nextCoord)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
+            inputBoard.setCellState(position, CellState.VISITED)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
+            inputBoard.setCellState(nextCoord, CellState.PLAYER)
+            setPosition(nextCoord)
+        }
 
-//         if (randomDirection.direction === 'RIGHT') {
-//             const nextCoord = new Coordinate(fromCoord.x + 1, fromCoord.y)
-//             this.simulationBoard.removeRightWall(this.position)
-//             this.simulationBoard.removeLeftWall(nextCoord)
-//             this.simulationBoard.setCellState(this.position, CellState.VISITED)
-//             this.position = nextCoord
-//             this.simulationBoard.setCellState(this.position, CellState.PLAYER)
-//         }
+        if (randomDirection.direction === 'RIGHT') {
+            const nextCoord = new Coordinate(fromCoord.x + 1, fromCoord.y)
+            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
+            inputBoard.removeRightWall(position)
+            inputBoard.removeLeftWall(nextCoord)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
+            inputBoard.setCellState(position, CellState.VISITED)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
+            inputBoard.setCellState(nextCoord, CellState.PLAYER)
+            setPosition(nextCoord)
+        }
 
-//         if (randomDirection.direction === 'TOP') {
-//             const nextCoord = new Coordinate(fromCoord.x, fromCoord.y - 1)
-//             this.simulationBoard.removeTopWall(this.position)
-//             this.simulationBoard.removeBottomWall(nextCoord)
-//             this.simulationBoard.setCellState(this.position, CellState.VISITED)
-//             this.position = nextCoord
-//             this.simulationBoard.setCellState(this.position, CellState.PLAYER)
-//         }
+        if (randomDirection.direction === 'TOP') {
+            const nextCoord = new Coordinate(fromCoord.x, fromCoord.y - 1)
+            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
+            inputBoard.removeTopWall(position)
+            inputBoard.removeBottomWall(nextCoord)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
+            inputBoard.setCellState(position, CellState.VISITED)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
+            inputBoard.setCellState(nextCoord, CellState.PLAYER)
+            setPosition(nextCoord)
+        }
 
-//         if (randomDirection.direction === 'BOTTOM') {
-//             const nextCoord = new Coordinate(fromCoord.x, fromCoord.y + 1)
-//             this.simulationBoard.removeBottomWall(this.position)
-//             this.simulationBoard.removeTopWall(nextCoord)
-//             this.simulationBoard.setCellState(this.position, CellState.VISITED, true)
-//             this.simulationBoard.setCellState(nextCoord, CellState.PLAYER, true)
-//             this.position = nextCoord
-//         }
-//     }
+        if (randomDirection.direction === 'BOTTOM') {
+            const nextCoord = new Coordinate(fromCoord.x, fromCoord.y + 1)
+            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
+            inputBoard.removeBottomWall(position)
+            inputBoard.removeTopWall(nextCoord)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
+            inputBoard.setCellState(position, CellState.VISITED, true)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
+            inputBoard.setCellState(nextCoord, CellState.PLAYER, true)
+            setPosition(nextCoord)
+        }
+        return inputBoard
+    }
 
-//     moveBackToVisitedDirection (fromCoord: Coordinate, availableVisitedDirections: Direction[]) {
-//         const currentCell = this.simulationBoard.getBoardCellAt(this.position.x, this.position.y)
-//         if (!currentCell) return
-//         const randomChosenDirection = availableVisitedDirections[0]
-//         const randomChosenCell = randomChosenDirection.cell
-//         if (!randomChosenCell) return
-//         switch (randomChosenDirection.direction) {
-//         case 'LEFT': {
-//             const nextCoord = new Coordinate(fromCoord.x - 1, fromCoord.y)
-//             this.simulationBoard.setCellState(this.position, CellState.AIR)
-//             this.position = nextCoord
-//             this.simulationBoard.setCellState(this.position, CellState.PLAYER)
-//             return false
-//         }
-//         case 'RIGHT': {
-//             const nextCoord = new Coordinate(fromCoord.x + 1, fromCoord.y)
-//             this.simulationBoard.setCellState(this.position, CellState.AIR)
-//             this.position = nextCoord
-//             this.simulationBoard.setCellState(this.position, CellState.PLAYER)
-//             return false
-//         }
-//         case 'TOP': {
-//             const nextCoord = new Coordinate(fromCoord.x, fromCoord.y - 1)
-//             this.simulationBoard.setCellState(this.position, CellState.AIR)
-//             this.position = nextCoord
-//             this.simulationBoard.setCellState(this.position, CellState.PLAYER)
-//             return false
-//         }
-//         case 'BOTTOM': {
-//             const nextCoord = new Coordinate(fromCoord.x, fromCoord.y + 1)
-//             this.simulationBoard.setCellState(this.position, CellState.AIR)
-//             this.position = nextCoord
-//             this.simulationBoard.setCellState(this.position, CellState.PLAYER)
-//             return false
-//         }
-//         }
-//     }
+    const moveBackToVisitedDirection = (
+        fromCoord: Coordinate,
+        availableVisitedDirections: Direction[],
+        inputBoard: Board
+    ): Board => {
+        const currentCell = simulationBoard.getBoardCellAt(position.x, position.y)
+        if (!currentCell) return inputBoard
+        const randomChosenDirection = availableVisitedDirections[0]
+        const randomChosenCell = randomChosenDirection.cell
+        if (!randomChosenCell) return inputBoard
+        switch (randomChosenDirection.direction) {
+        case 'LEFT': {
+            const nextCoord = new Coordinate(fromCoord.x - 1, fromCoord.y)
+            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
+            inputBoard.setCellState(position, CellState.AIR)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
+            inputBoard.setCellState(nextCoord, CellState.PLAYER)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
+            setPosition(nextCoord)
+            return inputBoard
+        }
+        case 'RIGHT': {
+            const nextCoord = new Coordinate(fromCoord.x + 1, fromCoord.y)
+            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
+            inputBoard.setCellState(position, CellState.AIR)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
+            inputBoard.setCellState(nextCoord, CellState.PLAYER)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
+            setPosition(nextCoord)
+            return inputBoard
+        }
+        case 'TOP': {
+            const nextCoord = new Coordinate(fromCoord.x, fromCoord.y - 1)
+            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
+            inputBoard.setCellState(position, CellState.AIR)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
+            inputBoard.setCellState(nextCoord, CellState.PLAYER)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
+            setPosition(nextCoord)
+            return inputBoard
+        }
+        case 'BOTTOM': {
+            const nextCoord = new Coordinate(fromCoord.x, fromCoord.y + 1)
+            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
+            inputBoard.setCellState(position, CellState.AIR)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
+            inputBoard.setCellState(nextCoord, CellState.PLAYER)
+            stepStack.addStep(new Step('MOVE',
+                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
+            setPosition(nextCoord)
+            return inputBoard
+        }
+        }
+    }
 
-//     getAllDirections (forCoordinate: Coordinate): Direction[] {
-//         const left: Direction = {
-//             cell: this.simulationBoard.getBoardCellAt(forCoordinate.x - 1, forCoordinate.y),
-//             direction: 'LEFT'
-//         }
-//         const right: Direction = {
-//             cell: this.simulationBoard.getBoardCellAt(forCoordinate.x + 1, forCoordinate.y),
-//             direction: 'RIGHT'
-//         }
-//         const top: Direction = {
-//             cell: this.simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y - 1),
-//             direction: 'TOP'
-//         }
-//         const bottom: Direction = {
-//             cell: this.simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y + 1),
-//             direction: 'BOTTOM'
-//         }
-//         return [left, right, top, bottom]
-//     }
+    const getAllDirections = (forCoordinate: Coordinate): Direction[] => {
+        const left: Direction = {
+            cell: simulationBoard.getBoardCellAt(forCoordinate.x - 1, forCoordinate.y),
+            direction: 'LEFT'
+        }
+        const right: Direction = {
+            cell: simulationBoard.getBoardCellAt(forCoordinate.x + 1, forCoordinate.y),
+            direction: 'RIGHT'
+        }
+        const top: Direction = {
+            cell: simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y - 1),
+            direction: 'TOP'
+        }
+        const bottom: Direction = {
+            cell: simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y + 1),
+            direction: 'BOTTOM'
+        }
+        return [left, right, top, bottom]
+    }
 
-//     getUnvisitedDirecitons (directions: Direction[]): Direction[] {
-//         return directions.filter(
-//             dir => dir.cell !== null &&
-//             (dir.cell.getState() === CellState.UNVISITED))
-//     }
+    const getUnvisitedDirecitons = (directions: Direction[]): Direction[] => {
+        return directions.filter(
+            dir => dir.cell !== null &&
+            (dir.cell.getState() === CellState.UNVISITED))
+    }
 
-//     getVisitedDirections (directions: Direction[]): Direction[] {
-//         const adjecentVisitedDirecitons = directions.filter(
-//             dir => dir.cell !== null &&
-//             dir.cell.getState() !== CellState.AIR)
+    const getVisitedDirections = (directions: Direction[]): Direction[] => {
+        const adjecentVisitedDirecitons = directions.filter(
+            dir => dir.cell !== null &&
+            dir.cell.getState() !== CellState.AIR)
 
-//         return adjecentVisitedDirecitons.filter(dir => {
-//             const adjectentCell = dir.cell
-//             switch (dir.direction) {
-//             case 'LEFT': {
-//                 if (adjectentCell) return !adjectentCell.getWalls()[1]
-//                 break
-//             }
-//             case 'RIGHT': {
-//                 if (adjectentCell) return !adjectentCell.getWalls()[3]
-//                 break
-//             }
-//             case 'TOP': {
-//                 if (adjectentCell) return !adjectentCell.getWalls()[2]
-//                 break
-//             }
-//             case 'BOTTOM': {
-//                 if (adjectentCell) return !adjectentCell.getWalls()[0]
-//                 break
-//             }
-//             }
-//             return false
-//         })
-//     }
+        return adjecentVisitedDirecitons.filter(dir => {
+            const adjectentCell = dir.cell
+            switch (dir.direction) {
+            case 'LEFT': {
+                if (adjectentCell) return !adjectentCell.getWalls()[1]
+                break
+            }
+            case 'RIGHT': {
+                if (adjectentCell) return !adjectentCell.getWalls()[3]
+                break
+            }
+            case 'TOP': {
+                if (adjectentCell) return !adjectentCell.getWalls()[2]
+                break
+            }
+            case 'BOTTOM': {
+                if (adjectentCell) return !adjectentCell.getWalls()[0]
+                break
+            }
+            }
+            return false
+        })
+    }
 
-//     getBoard (): Board {
-//         return this.simulationBoard
-//     }
+    const getBoard = (): Board => {
+        return simulationBoard
+    }
 
-//     getRandomDirection (directions: Direction[]): Direction {
-//         const randomInt = Math.floor(Math.random() * Object.keys(directions).length)
-//         return Object.values(directions)[randomInt]
-//     }
+    const getRandomDirection = (directions: Direction[]): Direction => {
+        const randomInt = Math.floor(Math.random() * Object.keys(directions).length)
+        return Object.values(directions)[randomInt]
+    }
 
-// }
-export {}
+    return { step }
+}

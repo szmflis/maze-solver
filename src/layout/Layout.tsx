@@ -61,7 +61,7 @@ const StyledWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   min-height: 100vh;
-  background-color: ${theme.colors.background};
+  background-color: ${theme.colors.surfaceDarkest};
 `
 
 interface LayoutProps {

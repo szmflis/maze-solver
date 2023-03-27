@@ -6,6 +6,7 @@ import { AppState } from '../store'
 import { boardActionDispatcher } from '../store/board/actions'
 import { resizeCanvas } from '../utils/CanvasUtils'
 import { Coordinate } from '../utils/Coordinate'
+import boardColors from '../styles/boardColors'
 
 interface DrawingServiceProps {
     drawingContext: CanvasRenderingContext2D | null
@@ -47,16 +48,16 @@ export const useDrawingService = (props: DrawingServiceProps) => {
         if (!drawingContext) return
         switch (cellState) {
         case CellState.AIR:
-            drawingContext.fillStyle = 'rgba(222, 222, 222, 0.5)'
+            drawingContext.fillStyle = boardColors.grey
             break
         case CellState.UNVISITED:
-            drawingContext.fillStyle = 'rgba(9, 0, 89, 0.5)'
+            drawingContext.fillStyle = boardColors.darkGreen
             break
         case CellState.VISITED:
-            drawingContext.fillStyle = 'rgba(28, 186, 70, 0.5)'
+            drawingContext.fillStyle = boardColors.green
             break
         case CellState.PLAYER:
-            drawingContext.fillStyle = 'rgba(255, 247, 0, 0.8)'
+            drawingContext.fillStyle = boardColors.red
             break
         case CellState.ENTRY:
             drawingContext.fillStyle = 'rgba(50, 0, 255, 0.5)'
