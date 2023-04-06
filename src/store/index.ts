@@ -2,10 +2,12 @@ import { applyMiddleware, combineReducers, compose, createStore } from 'redux'
 import { simulationReducer } from './simulation/reducer'
 import thunkMiddleware from 'redux-thunk'
 import { boardReducer } from './board/reducer'
+import { statisticsReducer } from './statistics/reducer'
 
 const rootReducer = combineReducers({
     simulationReducer,
-    boardReducer
+    boardReducer,
+    statisticsReducer
 })
 
 export type AppState = ReturnType<typeof rootReducer>

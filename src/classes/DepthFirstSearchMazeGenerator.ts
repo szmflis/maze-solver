@@ -24,7 +24,7 @@ export const useDepthFirstSearchMazeGenerator = (
 
     useInterval(() => {
         step()
-    }, simulationState.isRunning ? 1 : null)
+    }, simulationState.isRunning ? 10 : null)
 
     const step = (): void => {
         if (simulationState.simulationStep === 0) {
@@ -34,7 +34,6 @@ export const useDepthFirstSearchMazeGenerator = (
         generateNewBoard(position)
         simulationActionDispatcher.incrementSimulationStep()
         statisticsActionDispatcher.addStepStack(stepStack)
-        console.log(stepStack)
     }
 
     const generateNewBoard = (fromCoord: Coordinate) => {
@@ -252,15 +251,6 @@ export const useDepthFirstSearchMazeGenerator = (
             }
             return false
         })
-    }
-
-    const getBoard = (): Board => {
-        return simulationBoard
-    }
-
-    const getRandomDirection = (directions: Direction[]): Direction => {
-        const randomInt = Math.floor(Math.random() * Object.keys(directions).length)
-        return Object.values(directions)[randomInt]
     }
 
     return { step }

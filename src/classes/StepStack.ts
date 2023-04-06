@@ -32,4 +32,8 @@ export class StepStack {
         this.steps = []
     }
 
+    getSteps () {
+        return this.steps
+    }
+
 }

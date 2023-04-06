@@ -1,4 +1,4 @@
-import { Reducer } from 'react'
+import { Reducer } from 'redux'
 import { StatisticActions } from './actions'
 import { StatisticsState } from './types'
 
@@ -6,7 +6,7 @@ const initialStatisticsState: StatisticsState = {
     stepsHistory: []
 }
 
-export const informationReducer: Reducer<StatisticsState, StatisticActions> = (
+export const statisticsReducer: Reducer<StatisticsState, StatisticActions> = (
     state = initialStatisticsState,
     action
 ) => {
@@ -17,5 +17,11 @@ export const informationReducer: Reducer<StatisticsState, StatisticActions> = (
             stepsHistory: state.stepsHistory.concat(action.stepStack)
         }
     }
+    default:
+        neverReached(action)
     }
+    return state
+}
+
+const neverReached = (never: any): void => {
 }

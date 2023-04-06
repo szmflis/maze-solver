@@ -1,7 +1,8 @@
 import React, { InputHTMLAttributes } from 'react'
 import styled from 'styled-components'
-import { SpaceProps } from 'styled-system'
+import { SpaceProps, space } from 'styled-system'
 import { theme } from '../../styles/theme'
+import sliders from '../../styles/variants/sliders'
 
 interface SliderProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string
@@ -38,10 +39,10 @@ export const StyledSlider = styled(Slider)<StyledSliderProps>`
 
         width: 100%;
         height: 10px;
-        background-color: ${theme.colors.grey};
+        background-color: ${theme.colors.greyLight};
 
         outline: none;
-        opacity: 0.7;
+        opacity: 0.9;
         border-radius: 1rem;
 
         -webkit-transition: 0.2s;
@@ -56,8 +57,8 @@ export const StyledSlider = styled(Slider)<StyledSliderProps>`
             appearance: none;
             cursor: pointer;
 
-            width: 15px;
-            height: 15px;
+            width: 20px;
+            height: 20px;
 
             background-color: ${theme.colors.primary};
             border-radius: 1rem;
@@ -66,8 +67,8 @@ export const StyledSlider = styled(Slider)<StyledSliderProps>`
         &::-moz-range-thumb {
             cursor: pointer;
 
-            width: 15px;
-            height: 15px;
+            width: 20px;
+            height: 20px;
 
             background-color: ${theme.colors.primary};
             border-radius: 1rem;
@@ -75,7 +76,11 @@ export const StyledSlider = styled(Slider)<StyledSliderProps>`
     }
 
     label {
-        margin-bottom: ${theme.space[5]}px;
+        margin-bottom: ${theme.space[1]};
     }
 
+    
+    ${space};
+
+    ${(props) => props.disabled && sliders.disabled}
 `

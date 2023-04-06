@@ -1,6 +1,6 @@
 export default {
-    red: 'rgba(168, 32, 32, 0.6)',
-    green: 'rgba(22, 163, 0, 0.6)',
-    darkGreen: 'rgba(11, 84, 0, 0.6)',
-    grey: 'rgba(0, 56, 84, 0.6)'
+    unvisited: 'rgba(58, 82, 93)',
+    visited: 'rgba(63, 174, 221)',
+    air: 'rgba(167, 229, 255)',
+    player: 'rgba(6, 15, 228)'
 }

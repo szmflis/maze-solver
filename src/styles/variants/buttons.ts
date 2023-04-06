@@ -1,23 +1,39 @@
+import { darken } from 'polished'
 import colors from '../colors'
 
 export default {
     primary: {
         background: colors.primary,
-        color: colors.white
+        color: colors.white,
+        '&:hover': {
+            'background-color': darken(0.1, colors.primary)
+        }
     },
     secondary: {
         background: colors.primaryLight,
-        color: colors.white
+        color: colors.white,
+        '&:hover': {
+            'background-color': darken(0.1, colors.primaryLight)
+        }
     },
     warning: {
-        background: colors.warning
+        background: colors.warning,
+        '&:hover': {
+            'background-color': darken(0.1, colors.warning)
+        }
     },
     success: {
         background: colors.success,
-        color: colors.white
+        color: colors.white,
+        '&:hover': {
+            'background-color': darken(0.1, colors.success)
+        }
     },
     cancel: {
-        background: colors.danger
+        background: colors.danger,
+        '&:hover': {
+            'background-color': darken(0.1, colors.danger)
+        }
     },
     transparent: {
         background: 'inherit',

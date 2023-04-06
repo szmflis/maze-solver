@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { flexbox, FlexboxProps } from 'styled-system'
 
 import { Box, BoxProps } from '../Box/Box'
