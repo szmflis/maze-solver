@@ -1,73 +1,51 @@
-import React, { useEffect, useState } from 'react'
-import { FlexBox } from '../FlexBox/FlexBox'
+import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { theme } from '../../styles/theme'
+import { generateUUID } from '../../utils/TerminalUtils'
 import { useSelector } from 'react-redux'
 import { AppState } from '../../store'
-import { TerminalLineOutput } from './TerminalLineOutput'
-import { Step } from '../../classes/Step'
-import { StepStack } from '../../classes/StepStack'
-import { generateUUID } from '../../utils/TerminalUtils'
+import { TerminalStepsStackOutput } from './TerminalStepsStackOutput'
+import { Paragraph } from '../Typography/Typography'
 
 const StyledTerminalContainer = styled.div`
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    /* background-color: ${theme.colors.black}; */
+    background-color: ${theme.colors.black};
     width: 100%;
-    max-height: 300px;
-    overflow-y: scroll;
-    ::-webkit-scrollbar {
-        display: block;
-        width: 10px;
-    }
+    height: 300px;
+    overflow-y: auto;
+    font-family: ${theme.fonts.roboto};
+    padding: ${theme.space[1]};
 `
 
 export const Terminal: React.FC = () => {
 
-    // const stepsHistory = useSelector((state: AppState) =>
-    //     state.statisticsReducer.stepsHistory)
+    const stepsHistory = useSelector((state: AppState) =>
+        state.statisticsReducer.stepsHistory)
 
-    const [stepsStack, setStepsStack] = useState(new StepStack())
+    const messagesEndRef = useRef<HTMLDivElement>(null) as React.MutableRefObject<HTMLDivElement>
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView()
+    }
 
     useEffect(() => {
-        const dummyStep1: Step = new Step('MOVE', 'Found available directions to move to: [{}]')
-        const dummyStep2: Step = new Step('MOVE', 'Removing wall to the: {} of current position')
-        const dummyStep3: Step = new Step('MOVE', 'Setting current position to: {}')
-        const dummyStep4: Step = new Step('MOVE',
-            'Chosen to carve a path in direction {} to cell {}, that cell becomes the new cell.')
-        const dummyStep5: Step = new Step('MOVE', 'Found available directions to move to: [{}]')
-
-        const stepStack: StepStack = new StepStack()
-        stepStack.addStep(dummyStep1)
-        stepStack.addStep(dummyStep2)
-        stepStack.addStep(dummyStep3)
-        stepStack.addStep(dummyStep4)
-        stepStack.addStep(dummyStep4)
-        stepStack.addStep(dummyStep4)
-        stepStack.addStep(dummyStep4)
-        stepStack.addStep(dummyStep4)
-        stepStack.addStep(dummyStep4)
-        stepStack.addStep(dummyStep4)
-        stepStack.addStep(dummyStep5)
-        stepStack.addStep(dummyStep5)
-        stepStack.addStep(dummyStep5)
-        stepStack.addStep(dummyStep5)
-        stepStack.addStep(dummyStep5)
-        stepStack.addStep(dummyStep5)
-        stepStack.addStep(dummyStep5)
-        setStepsStack(stepStack)
-    }, [])
+        scrollToBottom()
+    }, [stepsHistory])
 
     return (
         <StyledTerminalContainer>
-            {stepsStack.getSteps().map((step: Step) => {
-                console.log('going')
-                return <TerminalLineOutput
-                    key={generateUUID()}
-                    step={step}
-                />
-            })}
+            {stepsHistory.length === 0
+                ? <Paragraph>
+                    Waiting for output
+                </Paragraph>
+                : stepsHistory.map(stepStack =>
+                    <TerminalStepsStackOutput
+                        key={generateUUID()}
+                        stepStack={stepStack}/>
+                )}
+
+            <div ref={messagesEndRef} />
         </StyledTerminalContainer>
     )
 }

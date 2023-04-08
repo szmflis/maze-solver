@@ -12,9 +12,20 @@ export const statisticsReducer: Reducer<StatisticsState, StatisticActions> = (
 ) => {
     switch (action.type) {
     case 'AddStepStack': {
+        const newStepsHistory = state.stepsHistory.concat(action.stepStack)
+        if (newStepsHistory.length > 10) {
+            newStepsHistory.shift()
+        }
+
         return {
             ...state,
-            stepsHistory: state.stepsHistory.concat(action.stepStack)
+            stepsHistory: newStepsHistory
+        }
+    }
+    case 'ClearStepStack': {
+        return {
+            ...state,
+            stepsHistory: []
         }
     }
     default:

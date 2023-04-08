@@ -1,18 +1,16 @@
+export interface LogPart {
+    text: string
+    color: string
+}
 
 export class Step {
-    private readonly stepType: string
-    private readonly stepDescription: string
+    private readonly logParts: LogPart[]
 
-    constructor (stepType: string, stepDescription: string) {
-        this.stepDescription = stepDescription
-        this.stepType = stepType
+    constructor (parts: LogPart[]) {
+        this.logParts = parts
     }
 
-    getStepDescription () {
-        return this.stepDescription
-    }
-
-    getStepType () {
-        return this.stepType
+    getLogParts () {
+        return this.logParts
     }
 }

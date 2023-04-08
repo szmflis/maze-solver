@@ -18,6 +18,7 @@ export default {
         mega: '0.8px'
     },
     fonts: {
-        nunito: 'Nunito, Helvetica'
+        nunito: 'Nunito, Helvetica',
+        roboto: 'Roboto, Helvetica'
     }
 }

@@ -11,11 +11,19 @@ const addStepStack = (stepStack: StepStack): AddStepStackAction => ({
     stepStack
 })
 
+interface ClearStepStackAction extends Action<'ClearStepStack'> {}
+
+const clearStepStack = (): ClearStepStackAction => ({
+    type: 'ClearStepStack'
+})
+
 export type StatisticActions = AddStepStackAction
+    | ClearStepStackAction
 
 export const statisticsActionDispatcher = bindActionCreators(
     {
-        addStepStack
+        addStepStack,
+        clearStepStack
     },
     store.dispatch
 )

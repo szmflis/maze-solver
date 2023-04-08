@@ -5,13 +5,11 @@ import { useInterval } from '../hooks/useInterval'
 import { AppState } from '../store'
 import { boardActionDispatcher } from '../store/board/actions'
 import { simulationActionDispatcher } from '../store/simulation/actions'
-import { statisticsActionDispatcher } from '../store/statistics/actions'
 import { Coordinate } from '../utils/Coordinate'
 import { getRandomDirectionFrom } from '../utils/GeneratorUtils'
 import { Board } from './Board'
 import { CellState } from './Cell'
-import { Step } from './Step'
-import { StepStack } from './StepStack'
+import { DepthFirstSearchTerminalLogger } from './DepthFirstSearchTerminalLogger'
 
 export const useDepthFirstSearchMazeGenerator = (
     initPosition: Coordinate
@@ -20,7 +18,7 @@ export const useDepthFirstSearchMazeGenerator = (
     const simulationState = useSelector((state: AppState) => state.simulationReducer)
     const simulationBoard = useSelector((state: AppState) => state.boardReducer.board)
 
-    const stepStack = new StepStack()
+    const logger = new DepthFirstSearchTerminalLogger()
 
     useInterval(() => {
         step()
@@ -30,10 +28,9 @@ export const useDepthFirstSearchMazeGenerator = (
         if (simulationState.simulationStep === 0) {
             boardActionDispatcher.checkEntireBoard()
         }
-        stepStack.clearSteps()
         generateNewBoard(position)
         simulationActionDispatcher.incrementSimulationStep()
-        statisticsActionDispatcher.addStepStack(stepStack)
+        logger.commitStack()
     }
 
     const generateNewBoard = (fromCoord: Coordinate) => {
@@ -43,20 +40,14 @@ export const useDepthFirstSearchMazeGenerator = (
             simulationBoard.getBoard())
 
         const allDirections = getAllDirections(fromCoord)
-        stepStack.addStep(new Step(
-            'SEARCH',
-            `Found ${allDirections.length} possible directions: ${allDirections.join(' ')}`))
+        logger.addSearchStep(allDirections, 'possible directions')
         const availableUnvisitedDirections = getUnvisitedDirecitons(allDirections)
-        stepStack.addStep(new Step(
-            'SEARCH',
-            `Unvisited directions: ${availableUnvisitedDirections.join(' ')}`))
+        logger.addSearchStep(availableUnvisitedDirections, 'Unvisited directions')
         if (availableUnvisitedDirections.length === 0) {
-            stepStack.addStep(new Step('SEARCH', 'Found no unvisited directions'))
+            logger.addFoundNoUnvisited()
             const availableVisitedDirections = getVisitedDirections(allDirections)
-            stepStack.addStep(new Step('SEARCH',
-                `Found ${availableVisitedDirections.length} visited directions directions`))
+            logger.addSearchStep(availableVisitedDirections, 'visited directions')
             if (availableVisitedDirections.length === 0) {
-                stepStack.addStep(new Step('FINISHED', 'Finished generation'))
                 finishGeneration()
             } else {
                 newBoard = moveBackToVisitedDirection(fromCoord, availableVisitedDirections, newBoard)
@@ -70,6 +61,7 @@ export const useDepthFirstSearchMazeGenerator = (
     const finishGeneration = () => {
         console.log('generation finished')
         simulationActionDispatcher.finishSimulation()
+        logger.addGenerationFinish()
     }
 
     const moveToUnvisitedDirection = (
@@ -78,61 +70,34 @@ export const useDepthFirstSearchMazeGenerator = (
         inputBoard: Board
     ): Board => {
         const randomDirection = getRandomDirectionFrom(availableUnvisitedDirections)
+        const nextCoord = getNextCoordinate(fromCoord, randomDirection)
+
         if (randomDirection.direction === 'LEFT') {
-            const nextCoord = new Coordinate(fromCoord.x - 1, fromCoord.y)
-            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
             inputBoard.removeLeftWall(position)
             inputBoard.removeRightWall(nextCoord)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
-            inputBoard.setCellState(position, CellState.VISITED)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
-            inputBoard.setCellState(nextCoord, CellState.PLAYER)
-            setPosition(nextCoord)
         }
 
         if (randomDirection.direction === 'RIGHT') {
-            const nextCoord = new Coordinate(fromCoord.x + 1, fromCoord.y)
-            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
             inputBoard.removeRightWall(position)
             inputBoard.removeLeftWall(nextCoord)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
-            inputBoard.setCellState(position, CellState.VISITED)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
-            inputBoard.setCellState(nextCoord, CellState.PLAYER)
-            setPosition(nextCoord)
         }
 
         if (randomDirection.direction === 'TOP') {
-            const nextCoord = new Coordinate(fromCoord.x, fromCoord.y - 1)
-            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
             inputBoard.removeTopWall(position)
             inputBoard.removeBottomWall(nextCoord)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
-            inputBoard.setCellState(position, CellState.VISITED)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
-            inputBoard.setCellState(nextCoord, CellState.PLAYER)
-            setPosition(nextCoord)
         }
 
         if (randomDirection.direction === 'BOTTOM') {
-            const nextCoord = new Coordinate(fromCoord.x, fromCoord.y + 1)
-            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
             inputBoard.removeBottomWall(position)
             inputBoard.removeTopWall(nextCoord)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
-            inputBoard.setCellState(position, CellState.VISITED, true)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
-            inputBoard.setCellState(nextCoord, CellState.PLAYER, true)
-            setPosition(nextCoord)
         }
+
+        logger.addMoveStep(nextCoord)
+        logger.addSetStep(position, 'VISITED')
+        logger.addSetStep(nextCoord, 'PLAYER')
+        inputBoard.setCellState(position, CellState.VISITED)
+        inputBoard.setCellState(nextCoord, CellState.PLAYER)
+        setPosition(nextCoord)
         return inputBoard
     }
 
@@ -146,55 +111,23 @@ export const useDepthFirstSearchMazeGenerator = (
         const randomChosenDirection = availableVisitedDirections[0]
         const randomChosenCell = randomChosenDirection.cell
         if (!randomChosenCell) return inputBoard
-        switch (randomChosenDirection.direction) {
-        case 'LEFT': {
-            const nextCoord = new Coordinate(fromCoord.x - 1, fromCoord.y)
-            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
-            inputBoard.setCellState(position, CellState.AIR)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
-            inputBoard.setCellState(nextCoord, CellState.PLAYER)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
-            setPosition(nextCoord)
-            return inputBoard
-        }
-        case 'RIGHT': {
-            const nextCoord = new Coordinate(fromCoord.x + 1, fromCoord.y)
-            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
-            inputBoard.setCellState(position, CellState.AIR)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
-            inputBoard.setCellState(nextCoord, CellState.PLAYER)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
-            setPosition(nextCoord)
-            return inputBoard
-        }
-        case 'TOP': {
-            const nextCoord = new Coordinate(fromCoord.x, fromCoord.y - 1)
-            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
-            inputBoard.setCellState(position, CellState.AIR)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
-            inputBoard.setCellState(nextCoord, CellState.PLAYER)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
-            setPosition(nextCoord)
-            return inputBoard
-        }
-        case 'BOTTOM': {
-            const nextCoord = new Coordinate(fromCoord.x, fromCoord.y + 1)
-            stepStack.addStep(new Step('MOVE', `Moving to coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}]`))
-            inputBoard.setCellState(position, CellState.AIR)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${position.x}] [y : ${position.y}] to VISITED`))
-            inputBoard.setCellState(nextCoord, CellState.PLAYER)
-            stepStack.addStep(new Step('MOVE',
-                `Setting coordinate [x : ${nextCoord.x}] [y : ${nextCoord.y}] to PLAYER`))
-            setPosition(nextCoord)
-            return inputBoard
-        }
+
+        const nextCoord = getNextCoordinate(fromCoord, randomChosenDirection)
+        logger.addMoveStep(nextCoord)
+        inputBoard.setCellState(position, CellState.AIR)
+        logger.addSetStep(position, 'VISITED')
+        inputBoard.setCellState(nextCoord, CellState.PLAYER)
+        logger.addSetStep(nextCoord, 'PLAYER')
+        setPosition(nextCoord)
+        return inputBoard
+    }
+
+    const getNextCoordinate = (fromCoord: Coordinate, direction: Direction) => {
+        switch (direction.direction) {
+        case 'LEFT': return new Coordinate(fromCoord.x - 1, fromCoord.y)
+        case 'BOTTOM': return new Coordinate(fromCoord.x, fromCoord.y + 1)
+        case 'RIGHT': return new Coordinate(fromCoord.x + 1, fromCoord.y)
+        case 'TOP': return new Coordinate(fromCoord.x, fromCoord.y - 1)
         }
     }
 

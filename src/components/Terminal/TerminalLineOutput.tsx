@@ -1,12 +1,7 @@
 import React from 'react'
-import styled from 'styled-components'
-import { FlexBox } from '../FlexBox/FlexBox'
-import { Paragraph } from '../Typography/Typography'
-import { Step } from '../../classes/Step'
-
-const StyledTerminalContainer = styled(FlexBox)`
-
-`
+import { Paragraph, Span } from '../Typography/Typography'
+import { LogPart, Step } from '../../classes/Step'
+import { generateUUID } from '../../utils/TerminalUtils'
 
 interface TerminalLineOutputProps {
     step: Step
@@ -17,8 +12,15 @@ export const TerminalLineOutput: React.FC<TerminalLineOutputProps> = (
     props
 ) => {
     return (
-        <div>
-            {`Type ${props.step.getStepType()} \t\t Msg: ${props.step.getStepDescription()}`}
-        </div>
+        <Paragraph>
+            {props.step.getLogParts().map((part: LogPart) =>
+                <Span
+                    textColor={part.color}
+                    paddingLeft={'5px'}
+                    fontWeight={part.color === 'white' ? 400 : 600}
+                    key={generateUUID()}
+                >{part.text}</Span>
+            )}
+        </Paragraph>
     )
 }

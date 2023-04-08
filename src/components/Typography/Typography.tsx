@@ -59,6 +59,19 @@ export const Paragraph = styled.p<CustomTypographyProps>`
   font-weight: ${theme.fontWeights[3]};
   letter-spacing: ${theme.letterSpacings.normal};
   line-height: ${theme.lineHeights[4]};
+  
+  ${space};
+  ${color};
+  ${typography};
+`
+
+export const Span = styled.span<CustomTypographyProps>`
+  margin: 0;
+  padding: 0;
+  font-size: ${theme.fontSizes[3]};
+  font-weight: ${theme.fontWeights[3]};
+  letter-spacing: ${theme.letterSpacings.normal};
+  line-height: ${theme.lineHeights[4]};
 
   ${space};
   ${color};

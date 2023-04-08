@@ -31,9 +31,9 @@ export const GlobalStyle = createGlobalStyle`
     overflow-x: hidden!important;
   }
 
-  ::-webkit-scrollbar {
+  /* ::-webkit-scrollbar {
     display: none;
-  }
+  } */
 
   body {
     font-family: ${theme.fonts.nunito};
@@ -55,7 +55,6 @@ export const GlobalStyle = createGlobalStyle`
     cursor: auto;
   }
 `
-// https://stackoverflow.com/questions/90178/make-a-div-fill-the-height-of-the-remaining-screen-space
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
