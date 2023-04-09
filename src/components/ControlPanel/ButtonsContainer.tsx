@@ -10,11 +10,13 @@ import { Button } from '../Button/Button'
 import { Board } from '../../classes/Board'
 import { statisticsActionDispatcher } from '../../store/statistics/actions'
 import { boardActionDispatcher } from '../../store/board/actions'
+import { useSimulationRunnerService } from '../../hooks/SimulationRunnerService'
 
 export const ButtonsContainer: React.FC = () => {
     const simulationState = useSelector((state: AppState) => state.simulationReducer)
     const boardState = useSelector((state: AppState) => state.boardReducer)
-    const simulationService = useDepthFirstSearchMazeGenerator(new Coordinate(0, 0))
+    // const simulationService = useDepthFirstSearchMazeGenerator(new Coordinate(0, 0))
+    const simulationService = useSimulationRunnerService()
 
     const resetSimulation = () => {
         simulationActionDispatcher.resetSimulation()
