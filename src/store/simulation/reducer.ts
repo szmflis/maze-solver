@@ -5,14 +5,13 @@ import { SimulationState } from './types'
 const initialSimulationState: SimulationState = {
     isRunning: false,
     simulationStep: 0,
-    mazeGenerationAlgorithm: 'BINARY_SEARCH'
+    mazeGenerationAlgorithm: 'BINARY_TREE'
 }
 
 export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     state = initialSimulationState,
     action
 ) => {
-    // console.log('Im here!', action.type)
     switch (action.type) {
     case 'StartSimulation':
     {
@@ -41,6 +40,12 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
         return {
             ...state,
             isRunning: false
+        }
+    }
+    case 'SetMazeGeneratingAlgorithm': {
+        return {
+            ...state,
+            mazeGenerationAlgorithm: action.algorithm
         }
     }
     default:

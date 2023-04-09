@@ -7,7 +7,7 @@ export default {
     fontWeights: [100, 200, 300, 400, 500, 600, 700, 800, 900],
     fontSizes: [10, 12, 14, 16, 20, 24, 36, 48, 60, 96].map(
         (n: number) => (n / 10) + 'rem'),
-    lineHeights: [12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56].map(
+    lineHeights: [10, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56].map(
         (n: number) => (n / 10) + 'rem'),
     fontSizeResp: {},
     letterSpacings: {

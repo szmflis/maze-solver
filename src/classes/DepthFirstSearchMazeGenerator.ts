@@ -1,128 +1,120 @@
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
 import { Direction } from '../enums/Direction'
-import { useInterval } from '../hooks/useInterval'
-import { AppState } from '../store'
-import { boardActionDispatcher } from '../store/board/actions'
 import { simulationActionDispatcher } from '../store/simulation/actions'
 import { Coordinate } from '../utils/Coordinate'
 import { getRandomDirectionFrom } from '../utils/GeneratorUtils'
 import { Board } from './Board'
 import { CellState } from './Cell'
 import { DepthFirstSearchTerminalLogger } from './DepthFirstSearchTerminalLogger'
+import { MazeGenerator } from './MazeGenerator'
 
-export const useDepthFirstSearchMazeGenerator = (
-    initPosition: Coordinate
-) => {
-    const [position, setPosition] = useState<Coordinate>(initPosition)
-    const simulationState = useSelector((state: AppState) => state.simulationReducer)
-    const simulationBoard = useSelector((state: AppState) => state.boardReducer.board)
+export class DepthFirstSearchMazeGenerator implements MazeGenerator {
 
-    const logger = new DepthFirstSearchTerminalLogger()
+    private readonly simulationBoard: Board
+    private position: Coordinate
+    private logger: DepthFirstSearchTerminalLogger
 
-    useInterval(() => {
-        step()
-    }, simulationState.isRunning ? 10 : null)
-
-    const step = (): void => {
-        if (simulationState.simulationStep === 0) {
-            boardActionDispatcher.checkEntireBoard()
-        }
-        generateNewBoard(position)
-        simulationActionDispatcher.incrementSimulationStep()
-        logger.commitStack()
+    constructor (board: Board, startingPosition: Coordinate) {
+        this.simulationBoard = board
+        this.position = startingPosition
+        this.logger = new DepthFirstSearchTerminalLogger()
     }
 
-    const generateNewBoard = (fromCoord: Coordinate) => {
-        let newBoard = new Board(
-            simulationBoard.getBoardWidth(),
-            simulationBoard.getBoardHeight(),
-            simulationBoard.getBoard())
+    public step (): Board {
+        this.logger = new DepthFirstSearchTerminalLogger()
+        const newBoard = this.generateNewBoard(this.position)
+        this.logger.commitStack()
+        return newBoard
+    }
 
-        const allDirections = getAllDirections(fromCoord)
-        logger.addSearchStep(allDirections, 'possible directions')
-        const availableUnvisitedDirections = getUnvisitedDirecitons(allDirections)
-        logger.addSearchStep(availableUnvisitedDirections, 'Unvisited directions')
+    public generateNewBoard (fromCoord: Coordinate): Board {
+        let newBoard = this.simulationBoard
+        const allDirections = this.getAllDirections(fromCoord)
+        this.logger.addSearchStep(allDirections, 'possible directions')
+        const availableUnvisitedDirections = this.getUnvisitedDirecitons(allDirections)
+        this.logger.addSearchStep(availableUnvisitedDirections, 'Unvisited directions')
         if (availableUnvisitedDirections.length === 0) {
-            logger.addFoundNoUnvisited()
-            const availableVisitedDirections = getVisitedDirections(allDirections)
-            logger.addSearchStep(availableVisitedDirections, 'visited directions')
+            this.logger.addFoundNoUnvisited()
+            const availableVisitedDirections = this.getVisitedDirections(allDirections)
+            this.logger.addSearchStep(availableVisitedDirections, 'visited directions')
             if (availableVisitedDirections.length === 0) {
-                finishGeneration()
+                this.finishGeneration()
             } else {
-                newBoard = moveBackToVisitedDirection(fromCoord, availableVisitedDirections, newBoard)
+                newBoard = this.moveBackToVisitedDirection(fromCoord, availableVisitedDirections, newBoard)
             }
         } else {
-            newBoard = moveToUnvisitedDirection(fromCoord, availableUnvisitedDirections, newBoard)
+            newBoard = this.moveToUnvisitedDirection(fromCoord, availableUnvisitedDirections, newBoard)
         }
-        boardActionDispatcher.setBoard(newBoard)
+        return newBoard
+        // boardActionDispatcher.setBoard(newBoard)
     }
 
-    const finishGeneration = () => {
+    private finishGeneration () {
         console.log('generation finished')
         simulationActionDispatcher.finishSimulation()
-        logger.addGenerationFinish()
+        this.logger.addGenerationFinish()
     }
 
-    const moveToUnvisitedDirection = (
+    private moveToUnvisitedDirection (
         fromCoord: Coordinate,
         availableUnvisitedDirections: Direction[],
         inputBoard: Board
-    ): Board => {
+    ): Board {
         const randomDirection = getRandomDirectionFrom(availableUnvisitedDirections)
-        const nextCoord = getNextCoordinate(fromCoord, randomDirection)
+        const nextCoord = this.getNextCoordinate(fromCoord, randomDirection)
 
         if (randomDirection.direction === 'LEFT') {
-            inputBoard.removeLeftWall(position)
+            inputBoard.removeLeftWall(this.position)
             inputBoard.removeRightWall(nextCoord)
         }
 
         if (randomDirection.direction === 'RIGHT') {
-            inputBoard.removeRightWall(position)
+            inputBoard.removeRightWall(this.position)
             inputBoard.removeLeftWall(nextCoord)
         }
 
         if (randomDirection.direction === 'TOP') {
-            inputBoard.removeTopWall(position)
+            inputBoard.removeTopWall(this.position)
             inputBoard.removeBottomWall(nextCoord)
         }
 
         if (randomDirection.direction === 'BOTTOM') {
-            inputBoard.removeBottomWall(position)
+            inputBoard.removeBottomWall(this.position)
             inputBoard.removeTopWall(nextCoord)
         }
 
-        logger.addMoveStep(nextCoord)
-        logger.addSetStep(position, 'VISITED')
-        logger.addSetStep(nextCoord, 'PLAYER')
-        inputBoard.setCellState(position, CellState.VISITED)
+        this.logger.addMoveStep(nextCoord)
+        this.logger.addSetStep(this.position, 'VISITED')
+        this.logger.addSetStep(nextCoord, 'PLAYER')
+        inputBoard.setCellState(this.position, CellState.VISITED)
         inputBoard.setCellState(nextCoord, CellState.PLAYER)
-        setPosition(nextCoord)
+        // setPosition(nextCoord)
+        this.position = nextCoord
         return inputBoard
     }
 
-    const moveBackToVisitedDirection = (
+    private moveBackToVisitedDirection (
         fromCoord: Coordinate,
         availableVisitedDirections: Direction[],
         inputBoard: Board
-    ): Board => {
-        const currentCell = simulationBoard.getBoardCellAt(position.x, position.y)
+    ): Board {
+        const currentCell = this.simulationBoard.getBoardCellAt(this.position.x, this.position.y)
         if (!currentCell) return inputBoard
         const randomChosenDirection = availableVisitedDirections[0]
         const randomChosenCell = randomChosenDirection.cell
         if (!randomChosenCell) return inputBoard
 
-        const nextCoord = getNextCoordinate(fromCoord, randomChosenDirection)
-        logger.addMoveStep(nextCoord)
-        inputBoard.setCellState(position, CellState.AIR)
-        logger.addSetStep(position, 'VISITED')
+        const nextCoord = this.getNextCoordinate(fromCoord, randomChosenDirection)
+        this.logger.addMoveStep(nextCoord)
+        inputBoard.setCellState(this.position, CellState.AIR)
+        this.logger.addSetStep(this.position, 'VISITED')
         inputBoard.setCellState(nextCoord, CellState.PLAYER)
-        logger.addSetStep(nextCoord, 'PLAYER')
-        setPosition(nextCoord)
+        this.logger.addSetStep(nextCoord, 'PLAYER')
+        // setPosition(nextCoord)
+        this.position = nextCoord
         return inputBoard
     }
 
-    const getNextCoordinate = (fromCoord: Coordinate, direction: Direction) => {
+    private getNextCoordinate (fromCoord: Coordinate, direction: Direction) {
         switch (direction.direction) {
         case 'LEFT': return new Coordinate(fromCoord.x - 1, fromCoord.y)
         case 'BOTTOM': return new Coordinate(fromCoord.x, fromCoord.y + 1)
@@ -131,33 +123,33 @@ export const useDepthFirstSearchMazeGenerator = (
         }
     }
 
-    const getAllDirections = (forCoordinate: Coordinate): Direction[] => {
+    private getAllDirections (forCoordinate: Coordinate): Direction[] {
         const left: Direction = {
-            cell: simulationBoard.getBoardCellAt(forCoordinate.x - 1, forCoordinate.y),
+            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x - 1, forCoordinate.y),
             direction: 'LEFT'
         }
         const right: Direction = {
-            cell: simulationBoard.getBoardCellAt(forCoordinate.x + 1, forCoordinate.y),
+            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x + 1, forCoordinate.y),
             direction: 'RIGHT'
         }
         const top: Direction = {
-            cell: simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y - 1),
+            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y - 1),
             direction: 'TOP'
         }
         const bottom: Direction = {
-            cell: simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y + 1),
+            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y + 1),
             direction: 'BOTTOM'
         }
         return [left, right, top, bottom]
     }
 
-    const getUnvisitedDirecitons = (directions: Direction[]): Direction[] => {
+    private getUnvisitedDirecitons (directions: Direction[]): Direction[] {
         return directions.filter(
             dir => dir.cell !== null &&
             (dir.cell.getState() === CellState.UNVISITED))
     }
 
-    const getVisitedDirections = (directions: Direction[]): Direction[] => {
+    private getVisitedDirections (directions: Direction[]): Direction[] {
         const adjecentVisitedDirecitons = directions.filter(
             dir => dir.cell !== null &&
             dir.cell.getState() !== CellState.AIR)
@@ -185,6 +177,4 @@ export const useDepthFirstSearchMazeGenerator = (
             return false
         })
     }
-
-    return { step }
 }

@@ -3,6 +3,7 @@ import { StyledCard } from '../Card/Card'
 import { FlexBox } from '../FlexBox/FlexBox'
 import { Sliders } from './Sliders'
 import { ButtonsContainer } from './ButtonsContainer'
+import { AlgorithmSelector } from './AlgorithmSelector'
 
 export const ControlPanel: React.FC = () => {
     return (
@@ -14,6 +15,7 @@ export const ControlPanel: React.FC = () => {
                 flexDirection={'column'}
                 alignItems={'center'}
             >
+                <AlgorithmSelector />
                 <Sliders />
                 <ButtonsContainer />
             </FlexBox>

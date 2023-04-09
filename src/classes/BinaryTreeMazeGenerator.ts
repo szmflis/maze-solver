@@ -18,14 +18,14 @@ export class BinaryTreeMazeGenerator implements MazeGenerator {
 
     public step (): Board {
         this.logger = new BinaryTreeTerminalLogger()
-        this.generateNewBoard(this.position)
+        this.generateNewBoard()
         this.logger.commitStack()
         return this.simulationBoard
     }
 
-    generateNewBoard (position: Coordinate) {
-        const availableDirections: Direction[] = this.getDirections(position)
-        this.logger.addMoveStep(position)
+    generateNewBoard () {
+        const availableDirections: Direction[] = this.getDirections(this.position)
+        this.logger.addMoveStep(this.position)
         const randomDirection = this.getRandomDirection(availableDirections)
         if (randomDirection.direction === 'LEFT' && randomDirection.cell !== null) {
             const coordToTheLeft = new Coordinate(this.position.x - 1, this.position.y)

@@ -1,19 +1,13 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { AppState } from '../../store'
 import { boardActionDispatcher } from '../../store/board/actions'
 import { theme } from '../../styles/theme'
 import { StyledSlider } from '../Slider/Slider'
+import { useSimulationService } from '../../hooks/SimulationService'
+import { useBoardService } from '../../hooks/BoardService'
 
 export const Sliders: React.FC = () => {
-    const simulationState = useSelector((state: AppState) => state.simulationReducer)
-    const boardState = useSelector((state: AppState) => state.boardReducer)
-
-    const shouldDisableSizeAdjustments = () => {
-        if (simulationState.isRunning) return true
-        if (!simulationState.isRunning && simulationState.simulationStep !== 0) return true
-        return false
-    }
+    const simulationService = useSimulationService()
+    const boardService = useBoardService()
 
     const handleWidthSlide = (event: React.ChangeEvent<HTMLInputElement>) => {
         boardActionDispatcher.changeBoardWidth(Number(event.target.value))
@@ -26,21 +20,21 @@ export const Sliders: React.FC = () => {
     return (
         <>
             <StyledSlider
-                value={boardState.boardWidth}
+                value={boardService.getBoardWidth()}
                 min={10}
                 max={100}
                 onChange={handleWidthSlide}
-                disabled={shouldDisableSizeAdjustments()}
-                label={`Width: ${boardState.boardWidth}`}
+                disabled={simulationService.shouldDisableSimulationControls()}
+                label={`Width: ${boardService.getBoardWidth()}`}
                 p={theme.space[2]}
             />
             <StyledSlider
-                value={boardState.boardHeight}
+                value={boardService.getBoardHeight()}
                 min={10}
                 max={100}
                 onChange={handleHeightSlide}
-                disabled={shouldDisableSizeAdjustments()}
-                label={`Height: ${boardState.boardHeight}`}
+                disabled={simulationService.shouldDisableSimulationControls()}
+                label={`Height: ${boardService.getBoardHeight()}`}
                 p={theme.space[2]}
             />
         </>
