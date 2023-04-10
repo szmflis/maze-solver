@@ -126,11 +126,10 @@ export const useDrawingService = (props: DrawingServiceProps) => {
         drawingContext.stroke()
     }
 
-    const predraw = (
-        canvas: HTMLCanvasElement
-    ): void => {
+    const predraw = (): void => {
         if (!drawingContext) return
         drawingContext.save()
+        const canvas = drawingContext.canvas
         resizeCanvas(canvas)
         const { width, height } = canvas
         drawingContext.clearRect(0, 0, width, height)

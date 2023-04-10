@@ -3,6 +3,7 @@ import { simulationActionDispatcher } from '../store/simulation/actions'
 import { Coordinate } from '../utils/Coordinate'
 import { BinaryTreeTerminalLogger } from './BinaryTreeTerminalLogger'
 import { Board } from './Board'
+import { CellState } from './Cell'
 import { MazeGenerator } from './MazeGenerator'
 
 export class BinaryTreeMazeGenerator implements MazeGenerator {
@@ -24,18 +25,20 @@ export class BinaryTreeMazeGenerator implements MazeGenerator {
     }
 
     generateNewBoard () {
+        this.simulationBoard.setCellState(this.position, CellState.VISITED)
         const availableDirections: Direction[] = this.getDirections(this.position)
-        this.logger.addMoveStep(this.position)
         const randomDirection = this.getRandomDirection(availableDirections)
-        if (randomDirection.direction === 'LEFT' && randomDirection.cell !== null) {
-            const coordToTheLeft = new Coordinate(this.position.x - 1, this.position.y)
-            this.simulationBoard.removeRightWall(coordToTheLeft)
-            this.simulationBoard.removeLeftWall(this.position)
+        if (randomDirection.direction === 'RIGHT' && randomDirection.cell !== null) {
+            const coordToTheRight = new Coordinate(this.position.x + 1, this.position.y)
+            this.simulationBoard.removeLeftWall(coordToTheRight)
+            this.simulationBoard.removeRightWall(this.position)
+            this.logger.removingWallStep(this.position, randomDirection)
         }
-        if (randomDirection.direction === 'TOP' && randomDirection.cell !== null) {
-            const coordToTheTop = new Coordinate(this.position.x, this.position.y - 1)
-            this.simulationBoard.removeBottomWall(coordToTheTop)
-            this.simulationBoard.removeTopWall(this.position)
+        if (randomDirection.direction === 'BOTTOM' && randomDirection.cell !== null) {
+            const coordToTheBottom = new Coordinate(this.position.x, this.position.y + 1)
+            this.simulationBoard.removeTopWall(coordToTheBottom)
+            this.simulationBoard.removeBottomWall(this.position)
+            this.logger.removingWallStep(this.position, randomDirection)
         }
         this.setNewPosition()
         return this.simulationBoard
@@ -51,18 +54,20 @@ export class BinaryTreeMazeGenerator implements MazeGenerator {
         } else {
             this.position = new Coordinate(this.position.x + 1, this.position.y)
         }
+        this.simulationBoard.setCellState(this.position, CellState.PLAYER)
+        this.logger.movedToStep(this.position)
     }
 
     getDirections (forCoordinate: Coordinate): Direction[] {
-        const left: Direction = {
-            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x - 1, forCoordinate.y),
-            direction: 'LEFT'
+        const right: Direction = {
+            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x + 1, forCoordinate.y),
+            direction: 'RIGHT'
         }
-        const top: Direction = {
-            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y - 1),
-            direction: 'TOP'
+        const bottom: Direction = {
+            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y + 1),
+            direction: 'BOTTOM'
         }
-        return [left, top]
+        return [right, bottom]
     }
 
     getRandomDirection (directions: Direction[]): Direction {
@@ -71,7 +76,7 @@ export class BinaryTreeMazeGenerator implements MazeGenerator {
     }
 
     finishGeneration () {
-        console.log('generation finished')
         simulationActionDispatcher.finishSimulation()
+        this.logger.addGenerationFinish()
     }
 }

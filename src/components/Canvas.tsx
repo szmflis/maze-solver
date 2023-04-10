@@ -11,7 +11,6 @@ const CanvasContainer = styled(FlexBox)`
     overflow: hidden;
     box-shadow: ${theme.shadows.mdShadow_1};
     background-color: ${theme.colors.surfaceLight};
-    /* margin: ${theme.space[2]}; */
 `
 
 export const SimulationCanvas: React.FC = () => {

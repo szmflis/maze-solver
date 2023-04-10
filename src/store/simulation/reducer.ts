@@ -12,6 +12,7 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     state = initialSimulationState,
     action
 ) => {
+    // console.log('called!')
     switch (action.type) {
     case 'StartSimulation':
     {

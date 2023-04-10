@@ -45,7 +45,6 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
             newBoard = this.moveToUnvisitedDirection(fromCoord, availableUnvisitedDirections, newBoard)
         }
         return newBoard
-        // boardActionDispatcher.setBoard(newBoard)
     }
 
     private finishGeneration () {

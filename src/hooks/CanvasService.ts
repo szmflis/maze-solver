@@ -18,20 +18,19 @@ export const useCanvasService =
             const context = canvas.getContext('2d')
             if (context == null) return
             setDrawingContext(context)
-            let animationFrameId: number
+            const animationFrameId = render()
 
-            const render = (): void => {
-                drawingService.predraw(canvas)
-                drawingService.draw()
-                drawingService.postdraw()
-                animationFrameId = window.requestAnimationFrame(render)
-            }
-
-            render()
             return () => {
                 window.cancelAnimationFrame(animationFrameId)
             }
         }, [drawingService.draw])
+
+        const render = (): number => {
+            drawingService.predraw()
+            drawingService.draw()
+            drawingService.postdraw()
+            return window.requestAnimationFrame(render)
+        }
 
         return canvasRef
     }

@@ -12,52 +12,33 @@ export class BinaryTreeTerminalLogger {
         this.stack = new StepStack()
     }
 
-    public addSearchStep (directions: Direction[], text: string): void {
-        const logParts: LogPart[] = [
-            this.createPart('SEARCH', 'red'),
-            this.createPart('Found'),
-            this.createPart(this.mapDirectionsToString(directions), 'blue')
-        ]
+    // public addSearchStep (directions: Direction[], text: string): void {
+    //     const logParts: LogPart[] = [
+    //         this.createPart('SEARCH', 'red'),
+    //         this.createPart('Found'),
+    //         this.createPart(this.mapDirectionsToString(directions), 'blue')
+    //     ]
 
-        this.stack.addStep(new Step(logParts))
-    }
+    //     this.stack.addStep(new Step(logParts))
+    // }
 
-    public addFoundNoUnvisited () {
-        const logParts: LogPart[] = [
-            this.createPart('SEARCH', 'red'),
-            this.createPart('Found no unvisited directions')
-        ]
-
-        this.stack.addStep(new Step(logParts))
-    }
-
-    public addGenerationFinish () {
-        const logParts: LogPart[] = [
-            this.createPart('ALGORITHM', 'orange'),
-            this.createPart('Finished maze generation')
-        ]
-
-        this.stack.addStep(new Step(logParts))
-    }
-
-    public addMoveStep (coord: Coordinate) {
+    public movedToStep (coordinate: Coordinate) {
         const logParts: LogPart[] = [
             this.createPart('MOVE', 'red'),
-            this.createPart('Moving to coordinate'),
-            this.createPart(`[x : ${coord.x}] [y : ${coord.y}]`, 'cyan')
+            this.createPart('Moved to coordinates: '),
+            this.createPart(`[${coordinate.x}, ${coordinate.y}]`, 'cyan')
         ]
 
         this.stack.addStep(new Step(logParts))
     }
 
-    public addSetStep (coord: Coordinate, state: string) {
+    public removingWallStep (coordinate: Coordinate, direction: Direction) {
         const logParts: LogPart[] = [
-            this.createPart('MOVE', 'red'),
-            this.createPart('Setting coordinate '),
-            this.createPart(`[x : ${coord.x}] [y : ${coord.y}]`, 'cyan'),
-            this.createPart('to'),
-            this.createPart(`${state}`, 'green')
+            this.createPart('SET', 'red'),
+            this.createPart('Removing wall to the: '),
+            this.createPart(`[${direction.direction}]`, 'cyan')
         ]
+
         this.stack.addStep(new Step(logParts))
     }
 
@@ -75,4 +56,14 @@ export class BinaryTreeTerminalLogger {
     private mapDirectionsToString (directions: Direction[]): string {
         return directions.map((dir: Direction) => dir.direction).join(' ')
     }
+
+    public addGenerationFinish () {
+        const logParts: LogPart[] = [
+            this.createPart('ALGORITHM', 'orange'),
+            this.createPart('Finished maze generation')
+        ]
+
+        this.stack.addStep(new Step(logParts))
+    }
+
 }
