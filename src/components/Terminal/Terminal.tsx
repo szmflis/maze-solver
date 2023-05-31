@@ -26,7 +26,7 @@ export const Terminal: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null) as React.MutableRefObject<HTMLDivElement>
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView()
+        messagesEndRef.current?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
     }
 
     useEffect(() => {

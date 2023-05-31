@@ -25,8 +25,6 @@ export const StyledCard = styled(Card)<StyledCardProps>`
     flex-direction: column;
     border-radius: ${theme.radii[2]};
     margin: ${theme.space[2]};
-    /* width: 100%; */
-    /* border: 1px solid red; */
 
     .header {
         background-color: ${theme.colors.surfaceDark};
@@ -37,6 +35,7 @@ export const StyledCard = styled(Card)<StyledCardProps>`
     };
 
     .children {
+        height: 100%;
         background-color: ${theme.colors.surface};
         padding: ${theme.space[2]};
         border-radius: 0 0 ${theme.radii[2]} ${theme.radii[2]};

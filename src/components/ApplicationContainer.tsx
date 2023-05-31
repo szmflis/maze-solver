@@ -3,7 +3,9 @@ import styled from 'styled-components'
 import { theme } from '../styles/theme'
 import { SimulationCanvas } from './Canvas'
 import { FlexBox } from './FlexBox/FlexBox'
-import { StateController } from './StateController/StateController'
+import { StyledCard } from './Card/Card'
+import { Terminal } from './Terminal/Terminal'
+import { ControlPanel } from './ControlPanel/ControlPanel'
 
 const StyledApplicationContainer = styled(FlexBox)`
     flex-direction: column;
@@ -15,8 +17,30 @@ const StyledApplicationContainer = styled(FlexBox)`
 export const ApplicationContainer: React.FC = () => {
     return (
         <StyledApplicationContainer>
-            <SimulationCanvas />
-            <StateController />
+            <FlexBox
+                flexDirection={'row'}
+                width="100%"
+            >
+                <StyledCard
+                    header={'Control Center'}
+                    width="100%"
+                >
+                    <ControlPanel />
+                </StyledCard>
+
+                <StyledCard
+                    header='Canvas'
+                    width="100%"
+                >
+                    <SimulationCanvas />
+                </StyledCard>
+
+            </FlexBox>
+            <StyledCard
+                header={'Terminal'}
+            >
+                <Terminal />
+            </StyledCard>
         </StyledApplicationContainer>
     )
 }
