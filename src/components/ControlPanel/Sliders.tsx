@@ -4,6 +4,7 @@ import { theme } from '../../styles/theme'
 import { StyledSlider } from '../Slider/Slider'
 import { useSimulationService } from '../../hooks/SimulationService'
 import { useBoardService } from '../../hooks/BoardService'
+import { simulationActionDispatcher } from '../../store/simulation/actions'
 
 export const Sliders: React.FC = () => {
     const simulationService = useSimulationService()
@@ -15,6 +16,10 @@ export const Sliders: React.FC = () => {
 
     const handleHeightSlide = (event: React.ChangeEvent<HTMLInputElement>) => {
         boardActionDispatcher.changeBoardHeight(Number(event.target.value))
+    }
+
+    const handleSpeedSlide = (event: React.ChangeEvent<HTMLInputElement>) => {
+        simulationActionDispatcher.setSimulationSpeed(Number(event.target.value))
     }
 
     return (
@@ -35,6 +40,15 @@ export const Sliders: React.FC = () => {
                 onChange={handleHeightSlide}
                 disabled={simulationService.shouldDisableSimulationControls()}
                 label={`Height: ${boardService.getBoardHeight()}`}
+                p={theme.space[2]}
+            />
+            <StyledSlider
+                value={simulationService.getSimulationSpeed()}
+                min={10}
+                max={100}
+                onChange={handleSpeedSlide}
+                disabled={simulationService.shouldDisableSimulationControls()}
+                label={`Speed: ${simulationService.getSimulationSpeed()}`}
                 p={theme.space[2]}
             />
         </>

@@ -1,6 +1,6 @@
 import React, { HTMLAttributes } from 'react'
 import styled from 'styled-components'
-import { border, color, flex, flexGrow, flexbox, layout, position, shadow, space } from 'styled-system'
+import { border, color, flexbox, layout, position, shadow, space } from 'styled-system'
 import { theme } from '../../styles/theme'
 import { FlexBox, FlexProps } from '../FlexBox/FlexBox'
 

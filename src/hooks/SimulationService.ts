@@ -10,5 +10,9 @@ export const useSimulationService = () => {
         return false
     }
 
-    return { shouldDisableSimulationControls }
+    const getSimulationSpeed = (): number => {
+        return simulationState.simulationSpeed
+    }
+
+    return { shouldDisableSimulationControls, getSimulationSpeed }
 }

@@ -49,3 +49,13 @@ export const Terminal: React.FC = () => {
         </StyledTerminalContainer>
     )
 }
+
+/*
+    TODO:
+        simulation info panel
+        maze saving&loading
+        maze solving algos mode
+        maze solving algos
+        maze gen by drawing
+        maze gen algos
+*/

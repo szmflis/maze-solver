@@ -18,7 +18,7 @@ export const useSimulationRunnerService = () => {
 
     useInterval(() => {
         step()
-    }, simulationState.isRunning ? 10 : null)
+    }, simulationState.isRunning ? simulationState.simulationSpeed : null)
 
     useEffect(() => {
         console.log('Setting algorithm')

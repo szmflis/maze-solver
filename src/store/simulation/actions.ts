@@ -48,12 +48,23 @@ const setMazeGeneratingAlogrithm = (algorithm: MazeGenAlgorithm): SetMazeGenerat
     algorithm
 })
 
+interface SetSimulationSpeedAction extends Action<'SetSimulationSpeed'> {
+    type: 'SetSimulationSpeed'
+    newSpeed: number
+}
+
+const setSimulationSpeed = (newSpeed: number): SetSimulationSpeedAction => ({
+    type: 'SetSimulationSpeed',
+    newSpeed
+})
+
 export type SimulationActions = StartSimulationAction
     | StopSimulationAction
     | ResetSimulationAction
     | IncrementSimulationStepAction
     | FinishSimulationAction
     | SetMazeGeneratingAlgorithmAction
+    | SetSimulationSpeedAction
 
 export const simulationActionDispatcher = bindActionCreators(
     {
@@ -62,7 +73,8 @@ export const simulationActionDispatcher = bindActionCreators(
         resetSimulation,
         incrementSimulationStep,
         finishSimulation,
-        setMazeGeneratingAlogrithm
+        setMazeGeneratingAlogrithm,
+        setSimulationSpeed
     },
     store.dispatch
 )

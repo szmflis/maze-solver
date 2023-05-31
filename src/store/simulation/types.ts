@@ -4,4 +4,5 @@ export interface SimulationState {
     readonly isRunning: boolean
     readonly simulationStep: number
     readonly mazeGenerationAlgorithm: MazeGenAlgorithm
+    readonly simulationSpeed: number
 }
