@@ -8,6 +8,7 @@ import { MazeGenerator } from '../classes/MazeGenerator'
 import { boardActionDispatcher } from '../store/board/actions'
 import { DepthFirstSearchMazeGenerator } from '../classes/DepthFirstSearchMazeGenerator'
 import { BinaryTreeMazeGenerator } from '../classes/BinaryTreeMazeGenerator'
+import { statisticsActionDispatcher } from '../store/statistics/actions'
 
 export const useSimulationRunnerService = () => {
     const simulationState = useSelector((state: AppState) => state.simulationReducer)
@@ -16,8 +17,13 @@ export const useSimulationRunnerService = () => {
     const [mazeGen, setMazeGen] = useState<MazeGenerator>(
         new DepthFirstSearchMazeGenerator(boardState.board, new Coordinate(0, 0)))
 
+    let startTime = Date.now()
     useInterval(() => {
         step()
+        const endTime = Date.now()
+        const executionTime = endTime - startTime
+        startTime = endTime
+        statisticsActionDispatcher.setMeasuredExecutionTime(executionTime + simulationState.simulationSpeed)
     }, simulationState.isRunning ? simulationState.simulationSpeed : null)
 
     useEffect(() => {

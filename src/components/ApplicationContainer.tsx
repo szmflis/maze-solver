@@ -6,6 +6,7 @@ import { FlexBox } from './FlexBox/FlexBox'
 import { StyledCard } from './Card/Card'
 import { Terminal } from './Terminal/Terminal'
 import { ControlPanel } from './ControlPanel/ControlPanel'
+import { InfoPanel } from './InfoPanel/InfoPanel'
 
 const StyledApplicationContainer = styled(FlexBox)`
     flex-direction: column;
@@ -36,11 +37,24 @@ export const ApplicationContainer: React.FC = () => {
                 </StyledCard>
 
             </FlexBox>
-            <StyledCard
-                header={'Terminal'}
+            <FlexBox
+                flexDirection={'row'}
+                width="100%"
             >
-                <Terminal />
-            </StyledCard>
+                <StyledCard
+                    width="50%"
+                    header={'Terminal'}
+                >
+                    <Terminal />
+                </StyledCard>
+                <StyledCard
+                    header={'Information Panel'}
+                    width="50%"
+                >
+                    <InfoPanel />
+                </StyledCard>
+            </FlexBox>
+
         </StyledApplicationContainer>
     )
 }

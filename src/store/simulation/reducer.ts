@@ -6,7 +6,8 @@ const initialSimulationState: SimulationState = {
     isRunning: false,
     simulationStep: 0,
     mazeGenerationAlgorithm: 'BINARY_TREE',
-    simulationSpeed: 10
+    simulationSpeed: 1,
+    simulationMode: 'MAZE_GEN'
 }
 
 export const simulationReducer: Reducer<SimulationState, SimulationActions> = (

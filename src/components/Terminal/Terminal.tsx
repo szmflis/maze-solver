@@ -53,6 +53,11 @@ export const Terminal: React.FC = () => {
 /*
     TODO:
         simulation info panel
+            simulation mode (maze gen, maze solve)
+            simulation algo name
+            simulation speed set
+            simulation speed real
+            simulation step counter
         maze saving&loading
         maze solving algos mode
         maze solving algos

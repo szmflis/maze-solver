@@ -3,7 +3,8 @@ import { StatisticActions } from './actions'
 import { StatisticsState } from './types'
 
 const initialStatisticsState: StatisticsState = {
-    stepsHistory: []
+    stepsHistory: [],
+    measuredSpeed: 0
 }
 
 export const statisticsReducer: Reducer<StatisticsState, StatisticActions> = (
@@ -26,6 +27,12 @@ export const statisticsReducer: Reducer<StatisticsState, StatisticActions> = (
         return {
             ...state,
             stepsHistory: []
+        }
+    }
+    case 'SetMeasuredExecutionTime': {
+        return {
+            ...state,
+            measuredSpeed: action.measuredExecutionTime
         }
     }
     default:

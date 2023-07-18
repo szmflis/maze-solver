@@ -44,8 +44,8 @@ export const Sliders: React.FC = () => {
             />
             <StyledSlider
                 value={simulationService.getSimulationSpeed()}
-                min={10}
-                max={100}
+                min={1}
+                max={1000}
                 onChange={handleSpeedSlide}
                 disabled={simulationService.shouldDisableSimulationControls()}
                 label={`Speed: ${simulationService.getSimulationSpeed()}`}
