@@ -21,6 +21,7 @@ export const useDrawingService = (props: DrawingServiceProps) => {
 
     useEffect(() => {
         setDrawingContext(props.drawingContext)
+        calculateStartingPoints()
     }, [props])
 
     useEffect(() => {
@@ -28,7 +29,6 @@ export const useDrawingService = (props: DrawingServiceProps) => {
     }, [simulationBoard.getBoardHeight(), simulationBoard.getBoardWidth()])
 
     const draw = (): void => {
-        calculateStartingPoints()
         translateBoard()
         drawRectangles()
         drawEmptyBoard()
@@ -36,7 +36,6 @@ export const useDrawingService = (props: DrawingServiceProps) => {
 
     const calculateStartingPoints = () => {
         if (!drawingContext) return
-        if (!shouldRecalculateStartingPoints()) return
 
         const canvasWidth = drawingContext.canvas.width
         const canvasHeight = drawingContext.canvas.height
@@ -104,15 +103,15 @@ export const useDrawingService = (props: DrawingServiceProps) => {
         })
     }
 
-    const shouldRecalculateStartingPoints = () => {
-        if (simulationBoard.getBoardHeight() + 1 !== simulationBoard.getBoard().length) {
-            return true
-        }
-        if (simulationBoard.getBoardWidth() + 1 !== simulationBoard.getBoard()[0].length) {
-            return true
-        }
-        return false
-    }
+    // const shouldRecalculateStartingPoints = () => {
+    //     if (simulationBoard.getBoardHeight() + 1 !== simulationBoard.getBoard().length) {
+    //         return true
+    //     }
+    //     if (simulationBoard.getBoardWidth() + 1 !== simulationBoard.getBoard()[0].length) {
+    //         return true
+    //     }
+    //     return false
+    // }
 
     const drawLine = (
         from: Coordinate,

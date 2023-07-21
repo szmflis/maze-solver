@@ -53,6 +53,7 @@ export const Terminal: React.FC = () => {
 /*
     TODO:
         maze solving algos mode
+            first implement a quick maze gen
         maze saving&loading
         maze solving algos
         maze gen by drawing
