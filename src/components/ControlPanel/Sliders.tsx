@@ -22,6 +22,17 @@ export const Sliders: React.FC = () => {
         simulationActionDispatcher.setSimulationSpeed(Number(event.target.value))
     }
 
+    // to delete:
+    // const [testdata, setTestdata] = useState('')
+
+    // useEffect(() => {
+    //     const dataLoader = async () => {
+    //         const data = await axios.get('/api/test')
+    //         console.log(data)
+    //     }
+    //     dataLoader()
+    // }, [])
+
     return (
         <>
             <StyledSlider

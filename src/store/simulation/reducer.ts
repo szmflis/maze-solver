@@ -59,6 +59,12 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
             simulationSpeed: action.newSpeed
         }
     }
+    case 'SetSimulationMode': {
+        return {
+            ...state,
+            simulationMode: action.simMode
+        }
+    }
     default:
         neverReached(action)
     }

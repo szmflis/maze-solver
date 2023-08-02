@@ -122,4 +122,17 @@ export class Board {
         this.board[coord.y][coord.x].removeWall(2)
     }
 
+    setBoard (board: Board) {
+        this.board = board.board
+    }
+
+    setBoardToUnvisited () {
+        const newBoard = new Board(this.getBoardWidth(), this.getBoardHeight(), this.getBoard())
+        for (let y = 0; y < this.getBoardHeight(); y++) {
+            for (let x = 0; x < this.getBoardWidth(); x++) {
+                newBoard.setCellState(new Coordinate(x, y), CellState.UNVISITED)
+            }
+        }
+        this.setBoard(newBoard)
+    }
 }

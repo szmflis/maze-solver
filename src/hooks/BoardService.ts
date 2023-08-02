@@ -6,6 +6,7 @@ export const useBoardService = () => {
 
     const getBoardWidth = () => boardState.boardWidth
     const getBoardHeight = () => boardState.boardHeight
+    const getBoard = () => boardState.board
 
-    return { getBoardWidth, getBoardHeight }
+    return { getBoardWidth, getBoardHeight, getBoard }
 }
