@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Board } from '../classes/Board'
+import { Maze } from '../classes/Board'
 import { Direction } from '../enums/Direction'
 import { useInterval } from '../hooks/useInterval'
 import { AppState } from '../store'
@@ -21,14 +21,14 @@ export const useBinaryTreeMazeGenerator = (
 
     const step = (): void => {
         if (simulationState.simulationStep === 0) {
-            boardActionDispatcher.checkEntireBoard()
+            boardActionDispatcher.unvisitEntireBoard()
         }
         boardActionDispatcher.setBoard(generateNewBoard())
         simulationActionDispatcher.incrementSimulationStep()
     }
 
-    const generateNewBoard = (): Board => {
-        const newBoard = new Board(
+    const generateNewBoard = (): Maze => {
+        const newBoard = new Maze(
             simulationBoard.getBoardWidth(),
             simulationBoard.getBoardHeight(),
             simulationBoard.getBoard())

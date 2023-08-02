@@ -1,7 +1,6 @@
 import { Action, bindActionCreators } from 'redux'
 import store from '..'
-import { Board } from '../../classes/Board'
-import { Cell, CellState } from '../../classes/Cell'
+import { Maze } from '../../classes/Board'
 import { Coordinate } from '../../utils/Coordinate'
 
 interface ChangeBoardWidthAction extends Action<'ChangeBoardWidth'> {
@@ -22,92 +21,47 @@ const changeBoardHeight = (newHeight: number): ChangeBoardHeightAction => ({
     newHeight
 })
 
-interface CheckBoardCellStateAction extends Action<'CheckBoardCellState'> {
-    coordinate: Coordinate
-}
-
-const checkBoardCellState = (coordinate: Coordinate): CheckBoardCellStateAction => ({
-    type: 'CheckBoardCellState',
-    coordinate
-})
-
-interface SetBoardCellStateAction extends Action<'SetBoardCellState'> {
-    coordinate: Coordinate
-    newState: CellState
-}
-
-const setBoardCellState = (coordinate: Coordinate, newState: CellState): SetBoardCellStateAction => ({
-    type: 'SetBoardCellState',
-    coordinate,
-    newState
-})
-
-interface UncheckBoardCellStateAction extends Action<'UncheckBoardCellState'> {
-    coordinate: Coordinate
-}
-
-const uncheckBoardCellState = (coordinate: Coordinate): UncheckBoardCellStateAction => ({
-    type: 'UncheckBoardCellState',
-    coordinate
-})
-
-interface SetBoardStartPointsAction extends Action<'SetBoardStartPoints'> {
+interface SetBoardStartingCoordinatesAction extends Action<'SetBoardStartingCoordinates'> {
     rowPoints: Coordinate[]
     columnPoints: Coordinate[]
 }
 
 const setStartingCoordinates = (
     rowPoints: Coordinate[], columnPoints: Coordinate[]
-): SetBoardStartPointsAction => ({
-    type: 'SetBoardStartPoints',
+): SetBoardStartingCoordinatesAction => ({
+    type: 'SetBoardStartingCoordinates',
     rowPoints,
     columnPoints
 })
 
 interface UnvisitEntireBoardAction extends Action<'UnvisitEntireBoard'> {}
 
-const checkEntireBoard = (): UnvisitEntireBoardAction => ({
+const unvisitEntireBoard = (): UnvisitEntireBoardAction => ({
     type: 'UnvisitEntireBoard'
 })
 
 interface SetBoardAction extends Action<'SetBoard'> {
-    board: Board
+    board: Maze
 }
 
-const setBoard = (board: Board): SetBoardAction => ({
+const setBoard = (board: Maze): SetBoardAction => ({
     type: 'SetBoard',
     board
 })
 
-interface SetMazeGenerationAction extends Action<'SetMazeGeneration'> {
-    type: 'SetMazeGeneration'
-}
-
-const setMazeGeneration = (): SetMazeGenerationAction => ({
-    type: 'SetMazeGeneration'
-})
-
 export type BoardActions = ChangeBoardHeightAction
     | ChangeBoardWidthAction
-    | CheckBoardCellStateAction
-    | UncheckBoardCellStateAction
-    | SetBoardStartPointsAction
+    | SetBoardStartingCoordinatesAction
     | UnvisitEntireBoardAction
     | SetBoardAction
-    | SetBoardCellStateAction
-    | SetMazeGenerationAction
 
 export const boardActionDispatcher = bindActionCreators(
     {
         changeBoardWidth,
         changeBoardHeight,
-        checkBoardCellState,
-        uncheckBoardCellState,
         setStartingCoordinates,
-        checkEntireBoard,
-        setBoard,
-        setBoardCellState,
-        setMazeGeneration
+        unvisitEntireBoard,
+        setBoard
     },
     store.dispatch
 )

@@ -1,5 +1,5 @@
 import { Reducer } from 'redux'
-import { Board } from '../../classes/Board'
+import { Maze } from '../../classes/Board'
 import { CellState } from '../../classes/Cell'
 import { Coordinate } from '../../utils/Coordinate'
 import { BoardActions } from './actions'
@@ -8,7 +8,7 @@ import { BoardState } from './types'
 const boardState: BoardState = {
     boardHeight: 10,
     boardWidth: 10,
-    board: new Board(10, 10)
+    board: new Maze(10, 10)
 }
 
 export const boardReducer: Reducer<BoardState, BoardActions> = (
@@ -18,8 +18,8 @@ export const boardReducer: Reducer<BoardState, BoardActions> = (
     switch (action.type) {
     case 'ChangeBoardWidth':
     {
-        const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
-        newBoard.setBoardWidth(action.newWidth)
+        const newBoard = new Maze(state.boardWidth, state.boardHeight, state.board.getBoard())
+        newBoard.setBoardDimenstions(newBoard.getBoardHeight(), action.newWidth)
         return {
             ...state,
             boardWidth: action.newWidth,
@@ -28,55 +28,26 @@ export const boardReducer: Reducer<BoardState, BoardActions> = (
     }
     case 'ChangeBoardHeight':
     {
-        const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
-        newBoard.setBoardHeight(action.newHeight)
+        const newBoard = new Maze(state.boardWidth, state.boardHeight, state.board.getBoard())
+        newBoard.setBoardDimenstions(action.newHeight, newBoard.getBoardWidth())
         return {
             ...state,
             boardHeight: action.newHeight,
             board: newBoard
         }
     }
-    case 'CheckBoardCellState':
+    case 'SetBoardStartingCoordinates':
     {
-        const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
-        newBoard.setCellState(action.coordinate, CellState.VISITED)
-        return {
-            ...state,
-            board: newBoard
-        }
-    }
-    case 'UncheckBoardCellState':
-    {
-        const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
-        newBoard.setCellState(action.coordinate, CellState.AIR)
-        return {
-            ...state,
-            board: newBoard
-        }
-    }
-    case 'SetBoardCellState':
-    {
-        const newBoard = new Board(state.boardWidth, state.boardHeight, state.board.getBoard())
-        newBoard.setCellState(action.coordinate, action.newState)
-        return {
-            ...state,
-            board: newBoard
-        }
-    }
-    case 'SetBoardStartPoints':
-    {
-        const oldBoard = state.board
-        const rowLen = action.rowPoints.length
-        const colLen = action.columnPoints.length
-        for (let y = 0; y < colLen; y++) {
-            for (let x = 0; x < rowLen; x++) {
+        const newBoard = state.board
+        for (let y = 0; y < action.columnPoints.length; y++) {
+            for (let x = 0; x < action.rowPoints.length; x++) {
                 const startPoint = new Coordinate(action.columnPoints[y].x, action.rowPoints[x].y)
-                oldBoard.setStartingCoordinate(y, x, startPoint)
+                newBoard.setStartingCoordinate(y, x, startPoint)
             }
         }
         return {
             ...state,
-            board: oldBoard
+            board: newBoard
         }
     }
     case 'UnvisitEntireBoard':

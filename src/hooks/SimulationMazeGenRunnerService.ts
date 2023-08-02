@@ -18,7 +18,7 @@ export const useSimulationMazeGenRunnerService = () => {
 
     const step = () => {
         if (simulationState.simulationStep === 0) {
-            boardActionDispatcher.checkEntireBoard()
+            boardActionDispatcher.unvisitEntireBoard()
         }
         const board = mazeGen.step()
         boardActionDispatcher.setBoard(board)

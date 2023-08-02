@@ -2,22 +2,22 @@ import { Direction } from '../enums/Direction'
 import { simulationActionDispatcher } from '../store/simulation/actions'
 import { Coordinate } from '../utils/Coordinate'
 import { BinaryTreeTerminalLogger } from './BinaryTreeTerminalLogger'
-import { Board } from './Board'
+import { Maze } from './Board'
 import { CellState } from './Cell'
 import { MazeGenerator } from './MazeGenerator'
 
 export class BinaryTreeMazeGenerator implements MazeGenerator {
-    private readonly simulationBoard: Board
+    private readonly simulationBoard: Maze
     private position: Coordinate
     private logger: BinaryTreeTerminalLogger
 
-    constructor (board: Board, startingPosition: Coordinate) {
+    constructor (board: Maze, startingPosition: Coordinate) {
         this.simulationBoard = board
         this.position = startingPosition
         this.logger = new BinaryTreeTerminalLogger()
     }
 
-    public step (): Board {
+    public step (): Maze {
         this.logger = new BinaryTreeTerminalLogger()
         this.generateNewBoard()
         this.logger.commitStack()

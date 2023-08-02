@@ -2,31 +2,31 @@ import { Direction } from '../enums/Direction'
 import { simulationActionDispatcher } from '../store/simulation/actions'
 import { Coordinate } from '../utils/Coordinate'
 import { getRandomDirectionFrom } from '../utils/GeneratorUtils'
-import { Board } from './Board'
+import { Maze } from './Board'
 import { CellState } from './Cell'
 import { DepthFirstSearchTerminalLogger } from './DepthFirstSearchTerminalLogger'
 import { MazeGenerator } from './MazeGenerator'
 
 export class DepthFirstSearchMazeGenerator implements MazeGenerator {
 
-    private readonly simulationBoard: Board
+    private readonly simulationBoard: Maze
     private position: Coordinate
     private logger: DepthFirstSearchTerminalLogger
 
-    constructor (board: Board, startingPosition: Coordinate) {
+    constructor (board: Maze, startingPosition: Coordinate) {
         this.simulationBoard = board
         this.position = startingPosition
         this.logger = new DepthFirstSearchTerminalLogger()
     }
 
-    public step (): Board {
+    public step (): Maze {
         this.logger = new DepthFirstSearchTerminalLogger()
         const newBoard = this.generateNewBoard(this.position)
         this.logger.commitStack()
         return newBoard
     }
 
-    public generateNewBoard (fromCoord: Coordinate): Board {
+    public generateNewBoard (fromCoord: Coordinate): Maze {
         let newBoard = this.simulationBoard
         const allDirections = this.getAllDirections(fromCoord)
         this.logger.addSearchStep(allDirections, 'possible directions')
@@ -56,8 +56,8 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
     private moveToUnvisitedDirection (
         fromCoord: Coordinate,
         availableUnvisitedDirections: Direction[],
-        inputBoard: Board
-    ): Board {
+        inputBoard: Maze
+    ): Maze {
         const randomDirection = getRandomDirectionFrom(availableUnvisitedDirections)
         const nextCoord = this.getNextCoordinate(fromCoord, randomDirection)
 
@@ -94,8 +94,8 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
     private moveBackToVisitedDirection (
         fromCoord: Coordinate,
         availableVisitedDirections: Direction[],
-        inputBoard: Board
-    ): Board {
+        inputBoard: Maze
+    ): Maze {
         const currentCell = this.simulationBoard.getBoardCellAt(this.position.x, this.position.y)
         if (!currentCell) return inputBoard
         const randomChosenDirection = availableVisitedDirections[0]

@@ -5,7 +5,7 @@ import { simulationActionDispatcher } from '../../store/simulation/actions'
 import { theme } from '../../styles/theme'
 import { FlexBox } from '../FlexBox/FlexBox'
 import { Button } from '../Button/Button'
-import { Board } from '../../classes/Board'
+import { Maze } from '../../classes/Board'
 import { statisticsActionDispatcher } from '../../store/statistics/actions'
 import { boardActionDispatcher } from '../../store/board/actions'
 import { useSimulationMazeGenRunnerService } from '../../hooks/SimulationMazeGenRunnerService'
@@ -19,7 +19,7 @@ export const SimulationControlButtonsContainer: React.FC = () => {
         simulationActionDispatcher.resetSimulation()
         statisticsActionDispatcher.clearStepStack()
         boardActionDispatcher.setBoard(
-            new Board(boardState.boardWidth, boardState.boardHeight))
+            new Maze(boardState.boardWidth, boardState.boardHeight))
     }
 
     return (

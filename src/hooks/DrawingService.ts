@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Board } from '../classes/Board'
+import { Maze } from '../classes/Board'
 import { CellState } from '../classes/Cell'
 import { AppState } from '../store'
 import { boardActionDispatcher } from '../store/board/actions'
@@ -14,7 +14,7 @@ interface DrawingServiceProps {
 
 export const useDrawingService = (props: DrawingServiceProps) => {
 
-    const simulationBoard = useSelector<AppState, Board>((state) => state.boardReducer.board)
+    const simulationBoard = useSelector<AppState, Maze>((state) => state.boardReducer.board)
 
     const [drawingContext, setDrawingContext] = useState<CanvasRenderingContext2D | null>()
     const [blockSide, setBlockSide] = useState<number>(0)

@@ -1,5 +1,5 @@
-import { Board } from './Board'
+import { Maze } from './Board'
 
 export interface MazeGenerator {
-    step: () => Board
+    step: () => Maze
 }

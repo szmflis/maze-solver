@@ -1,7 +1,7 @@
 import { Coordinate } from '../utils/Coordinate'
 import { Cell, CellState } from './Cell'
 
-export class Board {
+export class Maze {
     private board: Cell[][]
 
     constructor (width: number, height: number, board?: Cell[][]) {
@@ -20,28 +20,27 @@ export class Board {
         }
     }
 
-    setBoardWidth (newWidth: number): void {
-        const newBoard: Cell[][] = []
-        for (let y = 0; y < this.getBoardHeight(); y++) {
-            const row: Cell[] = []
-            for (let x = 0; x < newWidth; x++) {
-                const existingState = this.getBoardCellAt(x, y)
-                if (existingState != null) {
-                    row.push(existingState)
-                } else {
-                    row.push(new Cell(CellState.UNVISITED))
-                }
-            }
-            newBoard.push(row)
-        }
-        this.board = newBoard
+    setBoard (board: Maze) {
+        this.board = board.board
     }
 
-    setBoardHeight (newHeight: number): void {
+    getBoardWidth (): number {
+        return this.board[0].length
+    }
+
+    getBoardHeight (): number {
+        return this.board.length
+    }
+
+    getBoard (): Cell[][] {
+        return this.board
+    }
+
+    setBoardDimenstions (newHeight: number, newWidth: number): void {
         const newBoard: Cell[][] = []
         for (let y = 0; y < newHeight; y++) {
             const row: Cell[] = []
-            for (let x = 0; x < this.getBoardWidth(); x++) {
+            for (let x = 0; x < newWidth; x++) {
                 const existingState = this.getBoardCellAt(x, y)
                 if (existingState != null) {
                     row.push(existingState)
@@ -78,18 +77,6 @@ export class Board {
         this.getBoardCellAt(height, width)?.setStartingCoordinate(coordinate)
     }
 
-    getBoardWidth (): number {
-        return this.board[0].length
-    }
-
-    getBoardHeight (): number {
-        return this.board.length
-    }
-
-    getBoard (): Cell[][] {
-        return this.board
-    }
-
     getBoardWidthInPx (): number {
         const lastXCoordinate = this.board[this.getBoardHeight() - 1][this.getBoardWidth() - 1]
             .getStartingCoordinate()
@@ -122,12 +109,8 @@ export class Board {
         this.board[coord.y][coord.x].removeWall(2)
     }
 
-    setBoard (board: Board) {
-        this.board = board.board
-    }
-
     setBoardToUnvisited () {
-        const newBoard = new Board(this.getBoardWidth(), this.getBoardHeight(), this.getBoard())
+        const newBoard = new Maze(this.getBoardWidth(), this.getBoardHeight(), this.getBoard())
         for (let y = 0; y < this.getBoardHeight(); y++) {
             for (let x = 0; x < this.getBoardWidth(); x++) {
                 newBoard.setCellState(new Coordinate(x, y), CellState.UNVISITED)
