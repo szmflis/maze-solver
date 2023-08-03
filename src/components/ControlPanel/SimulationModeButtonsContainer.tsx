@@ -6,6 +6,9 @@ import { theme } from '../../styles/theme'
 import { FlexBox } from '../FlexBox/FlexBox'
 import { Button } from '../Button/Button'
 import { SimulationMode } from '../../store/simulation/types'
+import { boardActionDispatcher } from '../../store/board/actions'
+import { Coordinate } from '../../utils/Coordinate'
+import { CellState } from '../../classes/Cell'
 
 export const SimulationModeButtonsContainer: React.FC = () => {
     const simulationState = useSelector((state: AppState) => state.simulationReducer)
@@ -13,33 +16,37 @@ export const SimulationModeButtonsContainer: React.FC = () => {
 
     const setSimulationMode = (simMode: SimulationMode) => {
         simulationActionDispatcher.setSimulationModeAlogrithm(simMode)
-        boardState.board.setBoardToUnvisited()
+        boardActionDispatcher.unvisitEntireBoard()
+        boardActionDispatcher.setBoardCellState(
+            new Coordinate(boardState.boardWidth - 1, boardState.boardHeight - 1),
+            CellState.EXIT
+        )
     }
 
     return (
         <FlexBox
             width="100%"
             justifyContent="space-evenly"
-            marginTop={theme.space[2]}
+            marginBottom={theme.space[2]}
         >
             <Button
                 onClick={() => setSimulationMode('MAZE_GEN')}
                 disabled={simulationState.isRunning}
-                variant={simulationState.simulationMode === 'MAZE_GEN' ? 'success' : 'disabled'}
+                variant={simulationState.simulationMode === 'MAZE_GEN' ? 'primary' : 'secondary'}
             >
                         Generation
             </Button>
             <Button
                 onClick={() => setSimulationMode('MAZE_SOLVE')}
                 disabled={simulationState.isRunning}
-                variant={simulationState.simulationMode === 'MAZE_SOLVE' ? 'success' : 'disabled'}
+                variant={simulationState.simulationMode === 'MAZE_SOLVE' ? 'primary' : 'secondary'}
             >
                         Solving
             </Button>
             <Button
                 onClick={() => setSimulationMode('MAZE_DRAW')}
                 disabled={simulationState.isRunning}
-                variant={simulationState.simulationMode === 'MAZE_DRAW' ? 'success' : 'disabled'}
+                variant={simulationState.simulationMode === 'MAZE_DRAW' ? 'primary' : 'secondary'}
             >
                         Drawing
             </Button>

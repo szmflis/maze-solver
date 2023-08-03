@@ -1,3 +1,4 @@
+import { Direction } from '../enums/Direction'
 import { Coordinate } from '../utils/Coordinate'
 import { Cell, CellState } from './Cell'
 
@@ -117,5 +118,9 @@ export class Maze {
             }
         }
         this.setBoard(newBoard)
+    }
+
+    getBoardCellState (coord: Coordinate): CellState {
+        return this.board[coord.y][coord.x].getState()
     }
 }

@@ -1,11 +1,20 @@
 import { Direction } from '../enums/Direction'
 import { simulationActionDispatcher } from '../store/simulation/actions'
 import { Coordinate } from '../utils/Coordinate'
-import { getRandomDirectionFrom } from '../utils/GeneratorUtils'
-import { Maze } from './Board'
+import { Maze } from './Maze'
 import { CellState } from './Cell'
 import { DepthFirstSearchTerminalLogger } from './DepthFirstSearchTerminalLogger'
 import { MazeGenerator } from './MazeGenerator'
+import {
+    getAllPossibleDirectionsFromCoord,
+    getAdjecentUnvisitedDirecitons,
+    getAdjecentVisitedDirections,
+    getPossibleUnwalledDirections,
+    getRandomDirectionFrom,
+    removeWallsBetween,
+    getNextCoordinate
+} from './MazeAlgosUtil'
+import { boardActionDispatcher } from '../store/board/actions'
 
 export class DepthFirstSearchMazeGenerator implements MazeGenerator {
 
@@ -28,9 +37,9 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
 
     public generateNewBoard (fromCoord: Coordinate): Maze {
         let newBoard = this.simulationBoard
-        const allDirections = this.getAllDirections(fromCoord)
+        const allDirections = getAllPossibleDirectionsFromCoord(fromCoord, newBoard)
         this.logger.addSearchStep(allDirections, 'possible directions')
-        const availableUnvisitedDirections = this.getUnvisitedDirecitons(allDirections)
+        const availableUnvisitedDirections = getAdjecentUnvisitedDirecitons(allDirections)
         this.logger.addSearchStep(availableUnvisitedDirections, 'Unvisited directions')
         if (availableUnvisitedDirections.length === 0) {
             this.logger.addFoundNoUnvisited()
@@ -51,6 +60,9 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
         console.log('generation finished')
         simulationActionDispatcher.finishSimulation()
         this.logger.addGenerationFinish()
+        boardActionDispatcher.setBoardCellState(new Coordinate(
+            this.simulationBoard.getBoardHeight() - 1, this.simulationBoard.getBoardWidth() - 1
+        ), CellState.EXIT)
     }
 
     private moveToUnvisitedDirection (
@@ -59,34 +71,13 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
         inputBoard: Maze
     ): Maze {
         const randomDirection = getRandomDirectionFrom(availableUnvisitedDirections)
-        const nextCoord = this.getNextCoordinate(fromCoord, randomDirection)
-
-        if (randomDirection.direction === 'LEFT') {
-            inputBoard.removeLeftWall(this.position)
-            inputBoard.removeRightWall(nextCoord)
-        }
-
-        if (randomDirection.direction === 'RIGHT') {
-            inputBoard.removeRightWall(this.position)
-            inputBoard.removeLeftWall(nextCoord)
-        }
-
-        if (randomDirection.direction === 'TOP') {
-            inputBoard.removeTopWall(this.position)
-            inputBoard.removeBottomWall(nextCoord)
-        }
-
-        if (randomDirection.direction === 'BOTTOM') {
-            inputBoard.removeBottomWall(this.position)
-            inputBoard.removeTopWall(nextCoord)
-        }
-
+        const nextCoord = getNextCoordinate(fromCoord, randomDirection)
+        inputBoard = removeWallsBetween(this.position, nextCoord, randomDirection, inputBoard)
         this.logger.addMoveStep(nextCoord)
         this.logger.addSetStep(this.position, 'VISITED')
         this.logger.addSetStep(nextCoord, 'PLAYER')
         inputBoard.setCellState(this.position, CellState.VISITED)
         inputBoard.setCellState(nextCoord, CellState.PLAYER)
-        // setPosition(nextCoord)
         this.position = nextCoord
         return inputBoard
     }
@@ -102,7 +93,7 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
         const randomChosenCell = randomChosenDirection.cell
         if (!randomChosenCell) return inputBoard
 
-        const nextCoord = this.getNextCoordinate(fromCoord, randomChosenDirection)
+        const nextCoord = getNextCoordinate(fromCoord, randomChosenDirection)
         this.logger.addMoveStep(nextCoord)
         inputBoard.setCellState(this.position, CellState.AIR)
         this.logger.addSetStep(this.position, 'VISITED')
@@ -113,67 +104,8 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
         return inputBoard
     }
 
-    private getNextCoordinate (fromCoord: Coordinate, direction: Direction) {
-        switch (direction.direction) {
-        case 'LEFT': return new Coordinate(fromCoord.x - 1, fromCoord.y)
-        case 'BOTTOM': return new Coordinate(fromCoord.x, fromCoord.y + 1)
-        case 'RIGHT': return new Coordinate(fromCoord.x + 1, fromCoord.y)
-        case 'TOP': return new Coordinate(fromCoord.x, fromCoord.y - 1)
-        }
-    }
-
-    private getAllDirections (forCoordinate: Coordinate): Direction[] {
-        const left: Direction = {
-            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x - 1, forCoordinate.y),
-            direction: 'LEFT'
-        }
-        const right: Direction = {
-            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x + 1, forCoordinate.y),
-            direction: 'RIGHT'
-        }
-        const top: Direction = {
-            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y - 1),
-            direction: 'TOP'
-        }
-        const bottom: Direction = {
-            cell: this.simulationBoard.getBoardCellAt(forCoordinate.x, forCoordinate.y + 1),
-            direction: 'BOTTOM'
-        }
-        return [left, right, top, bottom]
-    }
-
-    private getUnvisitedDirecitons (directions: Direction[]): Direction[] {
-        return directions.filter(
-            dir => dir.cell !== null &&
-            (dir.cell.getState() === CellState.UNVISITED))
-    }
-
     private getVisitedDirections (directions: Direction[]): Direction[] {
-        const adjecentVisitedDirecitons = directions.filter(
-            dir => dir.cell !== null &&
-            dir.cell.getState() !== CellState.AIR)
-
-        return adjecentVisitedDirecitons.filter(dir => {
-            const adjectentCell = dir.cell
-            switch (dir.direction) {
-            case 'LEFT': {
-                if (adjectentCell) return !adjectentCell.getWalls()[1]
-                break
-            }
-            case 'RIGHT': {
-                if (adjectentCell) return !adjectentCell.getWalls()[3]
-                break
-            }
-            case 'TOP': {
-                if (adjectentCell) return !adjectentCell.getWalls()[2]
-                break
-            }
-            case 'BOTTOM': {
-                if (adjectentCell) return !adjectentCell.getWalls()[0]
-                break
-            }
-            }
-            return false
-        })
+        const adjecentVisitedDirecitons = getAdjecentVisitedDirections(directions)
+        return getPossibleUnwalledDirections(adjecentVisitedDirecitons)
     }
 }

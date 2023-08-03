@@ -22,22 +22,11 @@ export const Sliders: React.FC = () => {
         simulationActionDispatcher.setSimulationSpeed(Number(event.target.value))
     }
 
-    // to delete:
-    // const [testdata, setTestdata] = useState('')
-
-    // useEffect(() => {
-    //     const dataLoader = async () => {
-    //         const data = await axios.get('/api/test')
-    //         console.log(data)
-    //     }
-    //     dataLoader()
-    // }, [])
-
     return (
         <>
             <StyledSlider
                 value={boardService.getBoardWidth()}
-                min={10}
+                min={5}
                 max={100}
                 onChange={handleWidthSlide}
                 disabled={simulationService.shouldDisableSimulationControls()}
@@ -46,7 +35,7 @@ export const Sliders: React.FC = () => {
             />
             <StyledSlider
                 value={boardService.getBoardHeight()}
-                min={10}
+                min={5}
                 max={100}
                 onChange={handleHeightSlide}
                 disabled={simulationService.shouldDisableSimulationControls()}
@@ -58,7 +47,7 @@ export const Sliders: React.FC = () => {
                 min={1}
                 max={1000}
                 onChange={handleSpeedSlide}
-                disabled={simulationService.shouldDisableSimulationControls()}
+                // disabled={simulationService.shouldDisableSimulationControls()}
                 label={`Speed: ${simulationService.getSimulationSpeed()}`}
                 p={theme.space[2]}
             />

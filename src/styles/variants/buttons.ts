@@ -1,4 +1,4 @@
-import { darken } from 'polished'
+import { darken, lighten } from 'polished'
 import colors from '../colors'
 
 export default {
@@ -10,10 +10,10 @@ export default {
         }
     },
     secondary: {
-        background: colors.primaryLight,
+        background: lighten(0.2, colors.primaryLightest),
         color: colors.white,
         '&:hover': {
-            'background-color': darken(0.1, colors.primaryLight)
+            'background-color': darken(0.1, colors.primaryLightest)
         }
     },
     warning: {

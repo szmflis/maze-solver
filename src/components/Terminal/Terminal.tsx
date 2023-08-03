@@ -54,7 +54,9 @@ export const Terminal: React.FC = () => {
     TODO:
         maze solving algos mode
         maze solving algos
+        maze quickgen - so gen in a function at once, then print at once.
         maze saving&loading
         maze gen by drawing
         maze gen algos
+        maze solve algos
 */

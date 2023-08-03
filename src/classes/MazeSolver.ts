@@ -1,5 +1,5 @@
 import { Maze } from './Maze'
 
-export interface MazeGenerator {
+export interface MazeSolver {
     step: () => Maze
 }

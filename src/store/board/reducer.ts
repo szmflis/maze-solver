@@ -1,14 +1,14 @@
 import { Reducer } from 'redux'
-import { Maze } from '../../classes/Board'
+import { Maze } from '../../classes/Maze'
 import { CellState } from '../../classes/Cell'
 import { Coordinate } from '../../utils/Coordinate'
 import { BoardActions } from './actions'
 import { BoardState } from './types'
 
 const boardState: BoardState = {
-    boardHeight: 10,
-    boardWidth: 10,
-    board: new Maze(10, 10)
+    boardHeight: 5,
+    boardWidth: 5,
+    board: new Maze(5, 5)
 }
 
 export const boardReducer: Reducer<BoardState, BoardActions> = (
@@ -68,6 +68,14 @@ export const boardReducer: Reducer<BoardState, BoardActions> = (
         return {
             ...state,
             board: action.board
+        }
+    }
+    case 'SetBoardCellState': {
+        const newBoard = state.board
+        newBoard.setCellState(action.coordinate, action.cellState)
+        return {
+            ...state,
+            board: newBoard
         }
     }
     default:

@@ -1,7 +1,8 @@
 import { Action, bindActionCreators } from 'redux'
 import store from '..'
-import { Maze } from '../../classes/Board'
+import { Maze } from '../../classes/Maze'
 import { Coordinate } from '../../utils/Coordinate'
+import { CellState } from '../../classes/Cell'
 
 interface ChangeBoardWidthAction extends Action<'ChangeBoardWidth'> {
     newWidth: number
@@ -49,11 +50,26 @@ const setBoard = (board: Maze): SetBoardAction => ({
     board
 })
 
+interface SetBoardCellStateAction extends Action<'SetBoardCellState'> {
+    coordinate: Coordinate
+    cellState: CellState
+}
+
+const setBoardCellState = (
+    coordinate: Coordinate,
+    cellState: CellState
+): SetBoardCellStateAction => ({
+    type: 'SetBoardCellState',
+    coordinate,
+    cellState
+})
+
 export type BoardActions = ChangeBoardHeightAction
     | ChangeBoardWidthAction
     | SetBoardStartingCoordinatesAction
     | UnvisitEntireBoardAction
     | SetBoardAction
+    | SetBoardCellStateAction
 
 export const boardActionDispatcher = bindActionCreators(
     {
@@ -61,7 +77,8 @@ export const boardActionDispatcher = bindActionCreators(
         changeBoardHeight,
         setStartingCoordinates,
         unvisitEntireBoard,
-        setBoard
+        setBoard,
+        setBoardCellState
     },
     store.dispatch
 )

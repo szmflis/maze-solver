@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Maze } from '../classes/Board'
+import { Maze } from '../classes/Maze'
 import { Direction } from '../enums/Direction'
 import { useInterval } from '../hooks/useInterval'
 import { AppState } from '../store'

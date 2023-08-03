@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Maze } from '../classes/Board'
+import { Maze } from '../classes/Maze'
 import { CellState } from '../classes/Cell'
 import { AppState } from '../store'
 import { boardActionDispatcher } from '../store/board/actions'

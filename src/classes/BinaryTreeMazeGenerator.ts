@@ -2,7 +2,7 @@ import { Direction } from '../enums/Direction'
 import { simulationActionDispatcher } from '../store/simulation/actions'
 import { Coordinate } from '../utils/Coordinate'
 import { BinaryTreeTerminalLogger } from './BinaryTreeTerminalLogger'
-import { Maze } from './Board'
+import { Maze } from './Maze'
 import { CellState } from './Cell'
 import { MazeGenerator } from './MazeGenerator'
 

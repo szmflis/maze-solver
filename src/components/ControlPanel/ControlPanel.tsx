@@ -11,10 +11,10 @@ export const ControlPanel: React.FC = () => {
             flexDirection={'column'}
             alignItems={'center'}
         >
+            <SimulationModeButtonsContainer />
             <AlgorithmSelector />
             <Sliders />
             <SimulationControlButtonsContainer />
-            <SimulationModeButtonsContainer />
         </FlexBox>
     )
 }
