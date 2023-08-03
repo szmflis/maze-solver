@@ -1,8 +1,8 @@
 import React, { } from 'react'
 import { TerminalLineOutput } from './TerminalLineOutput'
-import { Step } from '../../classes/Step'
-import { StepStack } from '../../classes/StepStack'
 import { generateUUID } from '../../utils/TerminalUtils'
+import { StepStack } from '../../classes/model/StepStack'
+import { Step } from '../../classes/model/Step'
 
 interface TerminalStepsStackOutputProps {
     stepStack: StepStack

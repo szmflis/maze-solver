@@ -1,6 +1,6 @@
 import { Action, bindActionCreators } from 'redux'
 import store from '..'
-import { StepStack } from '../../classes/StepStack'
+import { StepStack } from '../../classes/model/StepStack'
 
 interface AddStepStackAction extends Action<'AddStepStack'> {
     stepStack: StepStack

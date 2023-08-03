@@ -1,9 +1,9 @@
 import { Reducer } from 'redux'
-import { Maze } from '../../classes/Maze'
-import { CellState } from '../../classes/Cell'
 import { Coordinate } from '../../utils/Coordinate'
 import { BoardActions } from './actions'
 import { BoardState } from './types'
+import { Maze } from '../../classes/model/Maze'
+import { CellState } from '../../classes/model/Cell'
 
 const boardState: BoardState = {
     boardHeight: 5,

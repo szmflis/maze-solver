@@ -1,4 +1,4 @@
-import { Coordinate } from '../utils/Coordinate'
+import { Coordinate } from '../../utils/Coordinate'
 
 export enum CellState {
     AIR, VISITED, UNVISITED, PLAYER, ENTRY, EXIT

@@ -1,4 +1,4 @@
-import { StepStack } from '../../classes/StepStack'
+import { StepStack } from '../../classes/model/StepStack'
 
 export interface StatisticsState {
     readonly stepsHistory: StepStack[]

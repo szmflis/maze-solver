@@ -1,8 +1,8 @@
 import { Action, bindActionCreators } from 'redux'
 import store from '..'
-import { Maze } from '../../classes/Maze'
 import { Coordinate } from '../../utils/Coordinate'
-import { CellState } from '../../classes/Cell'
+import { Maze } from '../../classes/model/Maze'
+import { CellState } from '../../classes/model/Cell'
 
 interface ChangeBoardWidthAction extends Action<'ChangeBoardWidth'> {
     newWidth: number

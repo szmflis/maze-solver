@@ -1,7 +1,7 @@
 import React from 'react'
 import { Paragraph, Span } from '../Typography/Typography'
-import { LogPart, Step } from '../../classes/Step'
 import { generateUUID } from '../../utils/TerminalUtils'
+import { LogPart, Step } from '../../classes/model/Step'
 
 interface TerminalLineOutputProps {
     step: Step

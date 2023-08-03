@@ -1,8 +1,8 @@
-import { Direction } from '../enums/Direction'
-import { statisticsActionDispatcher } from '../store/statistics/actions'
-import { Coordinate } from '../utils/Coordinate'
-import { LogPart, Step } from './Step'
-import { StepStack } from './StepStack'
+import { Direction } from '../../enums/Direction'
+import { statisticsActionDispatcher } from '../../store/statistics/actions'
+import { Coordinate } from '../../utils/Coordinate'
+import { LogPart, Step } from '../model/Step'
+import { StepStack } from '../model/StepStack'
 
 export class BinaryTreeTerminalLogger {
 
@@ -11,16 +11,6 @@ export class BinaryTreeTerminalLogger {
     constructor () {
         this.stack = new StepStack()
     }
-
-    // public addSearchStep (directions: Direction[], text: string): void {
-    //     const logParts: LogPart[] = [
-    //         this.createPart('SEARCH', 'red'),
-    //         this.createPart('Found'),
-    //         this.createPart(this.mapDirectionsToString(directions), 'blue')
-    //     ]
-
-    //     this.stack.addStep(new Step(logParts))
-    // }
 
     public movedToStep (coordinate: Coordinate) {
         const logParts: LogPart[] = [

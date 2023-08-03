@@ -1,8 +1,6 @@
-import { Direction } from '../enums/Direction'
-import { simulationActionDispatcher } from '../store/simulation/actions'
-import { Coordinate } from '../utils/Coordinate'
-import { CellState } from './Cell'
-import { Maze } from './Maze'
+import { Direction } from '../../enums/Direction'
+import { simulationActionDispatcher } from '../../store/simulation/actions'
+import { Coordinate } from '../../utils/Coordinate'
 import {
     getAdjecentUnvisitedDirecitons,
     getAdjecentVisitedDirections,
@@ -10,8 +8,10 @@ import {
     getNextCoordinate,
     getPossibleUnwalledDirections,
     getRandomDirectionFrom
-} from './MazeAlgosUtil'
-import { MazeSolver } from './MazeSolver'
+} from '../../utils/MazeAlgosUtil'
+import { CellState } from '../model/Cell'
+import { Maze } from '../model/Maze'
+import { MazeSolver } from '../model/MazeSolver'
 
 export class DepthFirstSearchMazeSolver implements MazeSolver {
 

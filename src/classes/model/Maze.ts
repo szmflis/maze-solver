@@ -1,5 +1,4 @@
-import { Direction } from '../enums/Direction'
-import { Coordinate } from '../utils/Coordinate'
+import { Coordinate } from '../../utils/Coordinate'
 import { Cell, CellState } from './Cell'
 
 export class Maze {

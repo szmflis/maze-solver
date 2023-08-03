@@ -8,7 +8,7 @@ import { Button } from '../Button/Button'
 import { SimulationMode } from '../../store/simulation/types'
 import { boardActionDispatcher } from '../../store/board/actions'
 import { Coordinate } from '../../utils/Coordinate'
-import { CellState } from '../../classes/Cell'
+import { CellState } from '../../classes/model/Cell'
 
 export const SimulationModeButtonsContainer: React.FC = () => {
     const simulationState = useSelector((state: AppState) => state.simulationReducer)

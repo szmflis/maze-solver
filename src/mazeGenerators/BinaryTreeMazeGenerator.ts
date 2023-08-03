@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Maze } from '../classes/Maze'
 import { Direction } from '../enums/Direction'
 import { useInterval } from '../hooks/useInterval'
 import { AppState } from '../store'
 import { boardActionDispatcher } from '../store/board/actions'
 import { simulationActionDispatcher } from '../store/simulation/actions'
 import { Coordinate } from '../utils/Coordinate'
+import { Maze } from '../classes/model/Maze'
 
 export const useBinaryTreeMazeGenerator = (
     initPosition: Coordinate

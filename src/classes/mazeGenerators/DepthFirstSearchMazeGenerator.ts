@@ -1,20 +1,12 @@
-import { Direction } from '../enums/Direction'
-import { simulationActionDispatcher } from '../store/simulation/actions'
-import { Coordinate } from '../utils/Coordinate'
-import { Maze } from './Maze'
-import { CellState } from './Cell'
+import { Direction } from '../../enums/Direction'
+import { boardActionDispatcher } from '../../store/board/actions'
+import { simulationActionDispatcher } from '../../store/simulation/actions'
+import { Coordinate } from '../../utils/Coordinate'
+import { getAdjecentUnvisitedDirecitons, getAdjecentVisitedDirections, getAllPossibleDirectionsFromCoord, getNextCoordinate, getPossibleUnwalledDirections, getRandomDirectionFrom, removeWallsBetween } from '../../utils/MazeAlgosUtil'
+import { CellState } from '../model/Cell'
+import { Maze } from '../model/Maze'
+import { MazeGenerator } from '../model/MazeGenerator'
 import { DepthFirstSearchTerminalLogger } from './DepthFirstSearchTerminalLogger'
-import { MazeGenerator } from './MazeGenerator'
-import {
-    getAllPossibleDirectionsFromCoord,
-    getAdjecentUnvisitedDirecitons,
-    getAdjecentVisitedDirections,
-    getPossibleUnwalledDirections,
-    getRandomDirectionFrom,
-    removeWallsBetween,
-    getNextCoordinate
-} from './MazeAlgosUtil'
-import { boardActionDispatcher } from '../store/board/actions'
 
 export class DepthFirstSearchMazeGenerator implements MazeGenerator {
 

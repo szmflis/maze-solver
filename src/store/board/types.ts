@@ -1,4 +1,4 @@
-import { Maze } from '../../classes/Maze'
+import { Maze } from '../../classes/model/Maze'
 
 export interface BoardState {
     readonly boardWidth: number

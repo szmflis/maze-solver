@@ -1,10 +1,10 @@
-import { Direction } from '../enums/Direction'
-import { simulationActionDispatcher } from '../store/simulation/actions'
-import { Coordinate } from '../utils/Coordinate'
+import { Direction } from '../../enums/Direction'
+import { simulationActionDispatcher } from '../../store/simulation/actions'
+import { Coordinate } from '../../utils/Coordinate'
 import { BinaryTreeTerminalLogger } from './BinaryTreeTerminalLogger'
-import { Maze } from './Maze'
-import { CellState } from './Cell'
-import { MazeGenerator } from './MazeGenerator'
+import { MazeGenerator } from '../model/MazeGenerator'
+import { Maze } from '../model/Maze'
+import { CellState } from '../model/Cell'
 
 export class BinaryTreeMazeGenerator implements MazeGenerator {
     private readonly simulationBoard: Maze

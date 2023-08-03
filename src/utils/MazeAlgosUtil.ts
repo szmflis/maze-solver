@@ -1,7 +1,7 @@
 import { Direction } from '../enums/Direction'
-import { Coordinate } from '../utils/Coordinate'
-import { CellState } from './Cell'
-import { Maze } from './Maze'
+import { Coordinate } from './Coordinate'
+import { CellState } from '../classes/model/Cell'
+import { Maze } from '../classes/model/Maze'
 
 export const getAllPossibleDirectionsFromCoord = (forCoordinate: Coordinate, maze: Maze): Direction[] => {
     const left: Direction = {

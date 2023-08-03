@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Maze } from '../classes/Maze'
-import { CellState } from '../classes/Cell'
 import { AppState } from '../store'
 import { boardActionDispatcher } from '../store/board/actions'
 import { resizeCanvas } from '../utils/CanvasUtils'
 import { Coordinate } from '../utils/Coordinate'
 import boardColors from '../styles/boardColors'
+import { Maze } from '../classes/model/Maze'
+import { CellState } from '../classes/model/Cell'
 
 interface DrawingServiceProps {
     drawingContext: CanvasRenderingContext2D | null

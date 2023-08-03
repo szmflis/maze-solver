@@ -5,10 +5,10 @@ import { simulationActionDispatcher } from '../../store/simulation/actions'
 import { theme } from '../../styles/theme'
 import { FlexBox } from '../FlexBox/FlexBox'
 import { Button } from '../Button/Button'
-import { Maze } from '../../classes/Maze'
 import { statisticsActionDispatcher } from '../../store/statistics/actions'
 import { boardActionDispatcher } from '../../store/board/actions'
 import { useSimulationMazeGenRunnerService } from '../../hooks/SimulationMazeGenRunnerService'
+import { Maze } from '../../classes/model/Maze'
 
 export const SimulationControlButtonsContainer: React.FC = () => {
     const simulationState = useSelector((state: AppState) => state.simulationReducer)

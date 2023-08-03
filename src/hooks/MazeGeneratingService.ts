@@ -1,10 +1,10 @@
 import { useSelector } from 'react-redux'
 import { AppState } from '../store'
-import { MazeGenerator } from '../classes/MazeGenerator'
-import { DepthFirstSearchMazeGenerator } from '../classes/DepthFirstSearchMazeGenerator'
+import { MazeGenerator } from '../classes/model/MazeGenerator'
 import { Coordinate } from '../utils/Coordinate'
 import { useEffect, useState } from 'react'
-import { BinaryTreeMazeGenerator } from '../classes/BinaryTreeMazeGenerator'
+import { BinaryTreeMazeGenerator } from '../classes/mazeGenerators/BinaryTreeMazeGenerator'
+import { DepthFirstSearchMazeGenerator } from '../classes/mazeGenerators/DepthFirstSearchMazeGenerator'
 
 export const useMazeGeneratingService = () => {
     const simulationState = useSelector((state: AppState) => state.simulationReducer)

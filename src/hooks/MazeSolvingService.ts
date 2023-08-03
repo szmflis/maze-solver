@@ -1,10 +1,9 @@
 import { useSelector } from 'react-redux'
 import { AppState } from '../store'
-import { DepthFirstSearchMazeGenerator } from '../classes/DepthFirstSearchMazeGenerator'
 import { Coordinate } from '../utils/Coordinate'
 import { useEffect, useState } from 'react'
-import { MazeSolver } from '../classes/MazeSolver'
-import { DepthFirstSearchMazeSolver } from '../classes/DepthFirstSearchMazeSolver'
+import { DepthFirstSearchMazeSolver } from '../classes/mazeSolvers/DepthFirstSearchMazeSolver'
+import { MazeSolver } from '../classes/model/MazeSolver'
 
 export const useMazeSolvingService = () => {
     const simulationState = useSelector((state: AppState) => state.simulationReducer)
