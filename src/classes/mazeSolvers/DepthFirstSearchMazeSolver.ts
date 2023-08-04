@@ -2,11 +2,11 @@ import { Direction } from '../../enums/Direction'
 import { simulationActionDispatcher } from '../../store/simulation/actions'
 import { Coordinate } from '../../utils/Coordinate'
 import {
-    getAdjecentUnvisitedDirecitons,
-    getAdjecentVisitedDirections,
+    getUnvisitedDirecitons,
+    getVisitedDirections,
     getAllPossibleDirectionsFromCoord,
     getNextCoordinate,
-    getPossibleUnwalledDirections,
+    getUnwalledDirections,
     getRandomDirectionFrom
 } from '../../utils/MazeAlgosUtil'
 import { CellState } from '../model/Cell'
@@ -30,16 +30,16 @@ export class DepthFirstSearchMazeSolver implements MazeSolver {
     private generateNewMaze (fromCoord: Coordinate): Maze {
         const newMaze = this.simulationMaze
         const allDirections = getAllPossibleDirectionsFromCoord(fromCoord, newMaze)
-        const availableUnwalledDirections = getPossibleUnwalledDirections(allDirections)
+        const availableUnwalledDirections = getUnwalledDirections(allDirections)
         const exitOnes = availableUnwalledDirections.filter(d => d.cell?.getState() === CellState.EXIT)
         if (exitOnes.length !== 0) {
             this.finishGeneration()
             newMaze.setCellState(this.position, CellState.VISITED)
             return newMaze
         } else {
-            const availableUnvisitedDirections = getAdjecentUnvisitedDirecitons(availableUnwalledDirections)
+            const availableUnvisitedDirections = getUnvisitedDirecitons(availableUnwalledDirections)
             if (availableUnvisitedDirections.length === 0) {
-                const adjecentVisitedDirections = getAdjecentVisitedDirections(availableUnwalledDirections)
+                const adjecentVisitedDirections = getVisitedDirections(availableUnwalledDirections)
                 this.moveBackToVisitedDirection(fromCoord, adjecentVisitedDirections, newMaze)
             } else {
                 this.moveToUnvisitedDirection(fromCoord, availableUnvisitedDirections, newMaze)

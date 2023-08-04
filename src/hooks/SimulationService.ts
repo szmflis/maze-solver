@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux'
 import { AppState } from '../store'
+import { simulationActionDispatcher } from '../store/simulation/actions'
 
 export const useSimulationService = () => {
     const simulationState = useSelector((state: AppState) => state.simulationReducer)
@@ -14,5 +15,9 @@ export const useSimulationService = () => {
         return simulationState.simulationSpeed
     }
 
-    return { shouldDisableSimulationControls, getSimulationSpeed }
+    const setSimulationSpeed = (newSpeedInMs: number): void => {
+        simulationActionDispatcher.setSimulationSpeed(newSpeedInMs)
+    }
+
+    return { shouldDisableSimulationControls, getSimulationSpeed, setSimulationSpeed }
 }

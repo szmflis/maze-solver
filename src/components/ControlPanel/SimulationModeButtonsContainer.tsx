@@ -6,21 +6,18 @@ import { theme } from '../../styles/theme'
 import { FlexBox } from '../FlexBox/FlexBox'
 import { Button } from '../Button/Button'
 import { SimulationMode } from '../../store/simulation/types'
-import { boardActionDispatcher } from '../../store/board/actions'
-import { Coordinate } from '../../utils/Coordinate'
-import { CellState } from '../../classes/model/Cell'
+import { useBoardService } from '../../hooks/BoardService'
 
 export const SimulationModeButtonsContainer: React.FC = () => {
     const simulationState = useSelector((state: AppState) => state.simulationReducer)
-    const boardState = useSelector((state: AppState) => state.boardReducer)
+    const boardService = useBoardService()
 
     const setSimulationMode = (simMode: SimulationMode) => {
+        if (simMode === 'MAZE_GEN') {
+            boardService.resetBoard()
+        }
         simulationActionDispatcher.setSimulationModeAlogrithm(simMode)
-        boardActionDispatcher.unvisitEntireBoard()
-        boardActionDispatcher.setBoardCellState(
-            new Coordinate(boardState.boardWidth - 1, boardState.boardHeight - 1),
-            CellState.EXIT
-        )
+        boardService.unvisitBoardWithEntryAndExit()
     }
 
     return (

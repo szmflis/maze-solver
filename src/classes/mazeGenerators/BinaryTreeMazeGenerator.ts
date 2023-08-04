@@ -17,6 +17,8 @@ export class BinaryTreeMazeGenerator implements MazeGenerator {
         this.logger = new BinaryTreeTerminalLogger()
     }
 
+    public getIsAlgorithmFinished = () => false
+
     public step (): Maze {
         this.logger = new BinaryTreeTerminalLogger()
         this.generateNewBoard()

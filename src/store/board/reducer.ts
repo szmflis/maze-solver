@@ -16,6 +16,13 @@ export const boardReducer: Reducer<BoardState, BoardActions> = (
     action
 ) => {
     switch (action.type) {
+    case 'ResetBoard':
+    {
+        return {
+            ...state,
+            board: new Maze(state.boardHeight, state.boardWidth)
+        }
+    }
     case 'ChangeBoardWidth':
     {
         const newBoard = new Maze(state.boardWidth, state.boardHeight, state.board.getBoard())

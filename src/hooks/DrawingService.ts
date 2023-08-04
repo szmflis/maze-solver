@@ -7,6 +7,7 @@ import { Coordinate } from '../utils/Coordinate'
 import boardColors from '../styles/boardColors'
 import { Maze } from '../classes/model/Maze'
 import { CellState } from '../classes/model/Cell'
+import { useBoardService } from './BoardService'
 
 interface DrawingServiceProps {
     drawingContext: CanvasRenderingContext2D | null
@@ -14,13 +15,15 @@ interface DrawingServiceProps {
 
 export const useDrawingService = (props: DrawingServiceProps) => {
 
+    const { drawingContext } = props
+
     const simulationBoard = useSelector<AppState, Maze>((state) => state.boardReducer.board)
 
-    const [drawingContext, setDrawingContext] = useState<CanvasRenderingContext2D | null>()
+    // const boardService = useBoardService()
+
     const [blockSide, setBlockSide] = useState<number>(0)
 
     useEffect(() => {
-        setDrawingContext(props.drawingContext)
         calculateStartingPoints()
     }, [props])
 

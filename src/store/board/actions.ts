@@ -4,6 +4,12 @@ import { Coordinate } from '../../utils/Coordinate'
 import { Maze } from '../../classes/model/Maze'
 import { CellState } from '../../classes/model/Cell'
 
+interface ResetBoardAction extends Action<'ResetBoard'> {}
+
+const resetBoard = (): ResetBoardAction => ({
+    type: 'ResetBoard'
+})
+
 interface ChangeBoardWidthAction extends Action<'ChangeBoardWidth'> {
     newWidth: number
 }
@@ -70,6 +76,7 @@ export type BoardActions = ChangeBoardHeightAction
     | UnvisitEntireBoardAction
     | SetBoardAction
     | SetBoardCellStateAction
+    | ResetBoardAction
 
 export const boardActionDispatcher = bindActionCreators(
     {
@@ -78,7 +85,8 @@ export const boardActionDispatcher = bindActionCreators(
         setStartingCoordinates,
         unvisitEntireBoard,
         setBoard,
-        setBoardCellState
+        setBoardCellState,
+        resetBoard
     },
     store.dispatch
 )

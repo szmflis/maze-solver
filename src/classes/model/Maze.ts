@@ -17,6 +17,10 @@ export class Maze {
                 newBoard.push(row)
             }
             this.board = newBoard
+            this.setCellState(new Coordinate(0, 0), CellState.PLAYER)
+            this.setCellState(new Coordinate(
+                width - 1, height - 1),
+            CellState.EXIT)
         }
     }
 
@@ -54,12 +58,13 @@ export class Maze {
     }
 
     setCellState (coordinate: Coordinate, state: CellState, debug?: boolean): void {
-        if (coordinate.y > this.getBoardHeight() || coordinate.y < 0) {
-            console.log('setCellState() ', coordinate.y, ' outside of board height ', this.board.length)
+        if (coordinate.y >= this.getBoardHeight() || coordinate.y < 0) {
+            console.log('Trying to set ', coordinate, 'to ', state)
+            console.log('setCellState() y ', coordinate.y, ' outside of board height ', this.getBoardHeight())
             return
         }
-        if (coordinate.x > this.getBoardWidth() || coordinate.x < 0) {
-            console.log('setCellState() ', coordinate.x, ' outside of board width ', this.board[0].length)
+        if (coordinate.x >= this.getBoardWidth() || coordinate.x < 0) {
+            console.log('setCellState() x ', coordinate.x, ' outside of board width ', this.getBoardWidth())
             return
         }
         this.board[coordinate.y][coordinate.x].setState(state)

@@ -1,8 +1,14 @@
 import { Direction } from '../../enums/Direction'
-import { boardActionDispatcher } from '../../store/board/actions'
-import { simulationActionDispatcher } from '../../store/simulation/actions'
 import { Coordinate } from '../../utils/Coordinate'
-import { getAdjecentUnvisitedDirecitons, getAdjecentVisitedDirections, getAllPossibleDirectionsFromCoord, getNextCoordinate, getPossibleUnwalledDirections, getRandomDirectionFrom, removeWallsBetween } from '../../utils/MazeAlgosUtil'
+import {
+    getUnvisitedDirecitons,
+    getVisitedDirections,
+    getAllPossibleDirectionsFromCoord,
+    getNextCoordinate,
+    getUnwalledDirections,
+    getRandomDirectionFrom,
+    removeWallsBetween
+} from '../../utils/MazeAlgosUtil'
 import { CellState } from '../model/Cell'
 import { Maze } from '../model/Maze'
 import { MazeGenerator } from '../model/MazeGenerator'
@@ -13,11 +19,13 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
     private readonly simulationBoard: Maze
     private position: Coordinate
     private logger: DepthFirstSearchTerminalLogger
+    private isAlogrithmFinished: boolean
 
     constructor (board: Maze, startingPosition: Coordinate) {
         this.simulationBoard = board
         this.position = startingPosition
         this.logger = new DepthFirstSearchTerminalLogger()
+        this.isAlogrithmFinished = false
     }
 
     public step (): Maze {
@@ -27,15 +35,18 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
         return newBoard
     }
 
-    public generateNewBoard (fromCoord: Coordinate): Maze {
+    public getIsAlgorithmFinished = (): boolean =>
+        this.isAlogrithmFinished
+
+    private generateNewBoard (fromCoord: Coordinate): Maze {
         let newBoard = this.simulationBoard
         const allDirections = getAllPossibleDirectionsFromCoord(fromCoord, newBoard)
         this.logger.addSearchStep(allDirections, 'possible directions')
-        const availableUnvisitedDirections = getAdjecentUnvisitedDirecitons(allDirections)
+        const availableUnvisitedDirections = getUnvisitedDirecitons(allDirections)
         this.logger.addSearchStep(availableUnvisitedDirections, 'Unvisited directions')
         if (availableUnvisitedDirections.length === 0) {
             this.logger.addFoundNoUnvisited()
-            const availableVisitedDirections = this.getVisitedDirections(allDirections)
+            const availableVisitedDirections = getUnwalledDirections(getVisitedDirections(allDirections))
             this.logger.addSearchStep(availableVisitedDirections, 'visited directions')
             if (availableVisitedDirections.length === 0) {
                 this.finishGeneration()
@@ -46,15 +57,6 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
             newBoard = this.moveToUnvisitedDirection(fromCoord, availableUnvisitedDirections, newBoard)
         }
         return newBoard
-    }
-
-    private finishGeneration () {
-        console.log('generation finished')
-        simulationActionDispatcher.finishSimulation()
-        this.logger.addGenerationFinish()
-        boardActionDispatcher.setBoardCellState(new Coordinate(
-            this.simulationBoard.getBoardHeight() - 1, this.simulationBoard.getBoardWidth() - 1
-        ), CellState.EXIT)
     }
 
     private moveToUnvisitedDirection (
@@ -91,13 +93,16 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
         this.logger.addSetStep(this.position, 'VISITED')
         inputBoard.setCellState(nextCoord, CellState.PLAYER)
         this.logger.addSetStep(nextCoord, 'PLAYER')
-        // setPosition(nextCoord)
         this.position = nextCoord
         return inputBoard
     }
 
-    private getVisitedDirections (directions: Direction[]): Direction[] {
-        const adjecentVisitedDirecitons = getAdjecentVisitedDirections(directions)
-        return getPossibleUnwalledDirections(adjecentVisitedDirecitons)
+    private readonly finishAlgorithm = (): void => {
+        this.isAlogrithmFinished = true
+    }
+
+    private finishGeneration () {
+        this.logger.addGenerationFinish()
+        this.finishAlgorithm()
     }
 }

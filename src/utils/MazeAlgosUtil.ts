@@ -38,19 +38,19 @@ export const getAllPossibleDirectionsFromCoord = (forCoordinate: Coordinate, maz
     return returnArr
 }
 
-export const getAdjecentUnvisitedDirecitons = (directions: Direction[]): Direction[] => {
+export const getUnvisitedDirecitons = (directions: Direction[]): Direction[] => {
     return directions.filter(
         dir => dir.cell !== null &&
         (dir.cell.getState() === CellState.UNVISITED))
 }
 
-export const getAdjecentVisitedDirections = (directions: Direction[]): Direction[] => {
+export const getVisitedDirections = (directions: Direction[]): Direction[] => {
     return directions.filter(
         dir => dir.cell !== null &&
         dir.cell.getState() === CellState.VISITED)
 }
 
-export const getPossibleUnwalledDirections = (directions: Direction[]): Direction[] => {
+export const getUnwalledDirections = (directions: Direction[]): Direction[] => {
     return directions.filter(dir => {
         const adjectentCell = dir.cell
         switch (dir.direction) {
