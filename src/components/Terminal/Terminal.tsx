@@ -53,6 +53,13 @@ export const Terminal: React.FC = () => {
 /*
     TODO:
         optimize rendering, refactor DrawingService etc.. mess
+            halfway there
+            qucikgen
+                works if startingpoints recalc happens constantly
+                does not if only these recalc it:
+                    graphicalHelperService.getDrawingContext()?.canvas.width,
+                    simulationBoard.getBoardWidth(),
+                    simulationBoard.getBoardHeight()
         maze saving&loading
         maze gen algos
         maze solve algos
