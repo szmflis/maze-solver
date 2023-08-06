@@ -4,10 +4,8 @@ import { AppState } from '../store'
 import { boardActionDispatcher } from '../store/board/actions'
 import { resizeCanvas } from '../utils/CanvasUtils'
 import { Coordinate } from '../utils/Coordinate'
-import boardColors from '../styles/boardColors'
 import { Maze } from '../classes/model/Maze'
 import { CellState } from '../classes/model/Cell'
-import { useGraphicalHelperService } from './GraphicalHelperService'
 import { COLOR_MAP } from '../drawers/RectangleDrawer'
 
 interface DrawingServiceProps {
@@ -20,6 +18,7 @@ export const useDrawingService = (props: DrawingServiceProps) => {
 
     const simulationBoard = useSelector<AppState, Maze>((state) => state.boardReducer.board)
 
+    // const simulationBoarwd = useBoardService()
     const [blockSide, setBlockSide] = useState<number>(0)
 
     useEffect(() => {
@@ -30,36 +29,6 @@ export const useDrawingService = (props: DrawingServiceProps) => {
         translateBoard()
         drawRectangles()
         drawEmptyBoard()
-    }
-
-    const calculateStartingPoints = () => {
-        if (!drawingContext) return
-
-        const canvasWidth = drawingContext.canvas.width
-        const canvasHeight = drawingContext.canvas.height
-
-        const boardWidth = simulationBoard.getBoardWidth() + 1
-        const boardHeight = simulationBoard.getBoardHeight() + 1
-
-        const blockWidth = Math.floor(canvasWidth / boardWidth)
-        const blockHeight = Math.floor(canvasHeight / boardHeight)
-        const blockSideLength = Math.min(blockWidth, blockHeight)
-
-        setBlockSide(blockSideLength)
-
-        const newXStartPoints: Coordinate[] = []
-        for (let x = 0; x <= boardWidth * blockSideLength; x = x + blockSideLength) {
-            newXStartPoints.push(new Coordinate(x, 0))
-        }
-        const newYStartPoints: Coordinate[] = []
-        for (let y = 0; y <= boardHeight * blockSideLength; y = y + blockSideLength) {
-            newYStartPoints.push(new Coordinate(0, y))
-        }
-
-        newYStartPoints.pop()
-        newXStartPoints.pop()
-
-        boardActionDispatcher.setStartingCoordinates(newYStartPoints, newXStartPoints)
     }
 
     const translateBoard = () => {
@@ -162,6 +131,36 @@ export const useDrawingService = (props: DrawingServiceProps) => {
             }
         }
         return startCoords
+    }
+
+    const calculateStartingPoints = () => {
+        if (!drawingContext) return
+
+        const canvasWidth = drawingContext.canvas.width
+        const canvasHeight = drawingContext.canvas.height
+
+        const boardWidth = simulationBoard.getBoardWidth() + 1
+        const boardHeight = simulationBoard.getBoardHeight() + 1
+
+        const blockWidth = Math.floor(canvasWidth / boardWidth)
+        const blockHeight = Math.floor(canvasHeight / boardHeight)
+        const blockSideLength = Math.min(blockWidth, blockHeight)
+
+        setBlockSide(blockSideLength)
+
+        const newXStartPoints: Coordinate[] = []
+        for (let x = 0; x <= boardWidth * blockSideLength; x = x + blockSideLength) {
+            newXStartPoints.push(new Coordinate(x, 0))
+        }
+        const newYStartPoints: Coordinate[] = []
+        for (let y = 0; y <= boardHeight * blockSideLength; y = y + blockSideLength) {
+            newYStartPoints.push(new Coordinate(0, y))
+        }
+
+        newYStartPoints.pop()
+        newXStartPoints.pop()
+
+        boardActionDispatcher.setStartingCoordinates(newYStartPoints, newXStartPoints)
     }
 
     return {

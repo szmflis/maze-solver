@@ -30,10 +30,10 @@ export const ApplicationContainer: React.FC = () => {
                 </StyledCard>
 
                 <StyledCard
-                    header='Canvas'
-                    width="100%"
+                    header={'Information Panel'}
+                    width="50%"
                 >
-                    <SimulationCanvas />
+                    <InfoPanel />
                 </StyledCard>
 
             </FlexBox>
@@ -48,10 +48,10 @@ export const ApplicationContainer: React.FC = () => {
                     <Terminal />
                 </StyledCard>
                 <StyledCard
-                    header={'Information Panel'}
-                    width="50%"
+                    header='Canvas'
+                    width="60%"
                 >
-                    <InfoPanel />
+                    <SimulationCanvas />
                 </StyledCard>
             </FlexBox>
 

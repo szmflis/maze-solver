@@ -3,13 +3,11 @@ import { simulationReducer } from './simulation/reducer'
 import thunkMiddleware from 'redux-thunk'
 import { boardReducer } from './board/reducer'
 import { statisticsReducer } from './statistics/reducer'
-import { graphicsReducer } from './graphics/reducer'
 
 const rootReducer = combineReducers({
     simulationReducer,
     boardReducer,
-    statisticsReducer,
-    graphicsReducer
+    statisticsReducer
 })
 
 export type AppState = ReturnType<typeof rootReducer>
