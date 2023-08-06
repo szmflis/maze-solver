@@ -20,13 +20,24 @@ const setDrawingContext = (drawingContext: CanvasRenderingContext2D): SetDrawing
     drawingContext
 })
 
+interface SetBlockSideInPxAction extends Action<'SetBlockSideInPx'> {
+    blockSideInPx: number
+}
+
+const setBlockSideInPx = (blockSideInPx: number): SetBlockSideInPxAction => ({
+    type: 'SetBlockSideInPx',
+    blockSideInPx
+})
+
 export type GraphicsActions = SetDrawStartPointsAction
     | SetDrawingContextAction
+    | SetBlockSideInPxAction
 
 export const graphicsActionDispatcher = bindActionCreators(
     {
         setDrawStartPoints,
-        setDrawingContext
+        setDrawingContext,
+        setBlockSideInPx
     },
     store.dispatch
 )

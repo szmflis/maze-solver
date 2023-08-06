@@ -4,7 +4,8 @@ import { GraphicsActions } from './actions'
 
 const graphicsInitState: GraphicsState = {
     drawStartPoints: [],
-    drawingContext: null
+    drawingContext: null,
+    blockSide: 0
 }
 
 export const graphicsReducer: Reducer<GraphicsState, GraphicsActions> = (
@@ -25,6 +26,13 @@ export const graphicsReducer: Reducer<GraphicsState, GraphicsActions> = (
         return {
             ...state,
             drawingContext: action.drawingContext
+        }
+    }
+    case 'SetBlockSideInPx':
+    {
+        return {
+            ...state,
+            blockSide: action.blockSideInPx
         }
     }
     default:

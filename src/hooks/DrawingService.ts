@@ -8,6 +8,7 @@ import boardColors from '../styles/boardColors'
 import { Maze } from '../classes/model/Maze'
 import { CellState } from '../classes/model/Cell'
 import { useGraphicalHelperService } from './GraphicalHelperService'
+import { COLOR_MAP } from '../drawers/RectangleDrawer'
 
 interface DrawingServiceProps {
     drawingContext: CanvasRenderingContext2D | null
@@ -21,11 +22,9 @@ export const useDrawingService = (props: DrawingServiceProps) => {
 
     const [blockSide, setBlockSide] = useState<number>(0)
 
-    const graphicalHelperService = useGraphicalHelperService()
-
     useEffect(() => {
         calculateStartingPoints()
-    }, [graphicalHelperService])
+    })
 
     const draw = (): void => {
         translateBoard()
@@ -34,7 +33,6 @@ export const useDrawingService = (props: DrawingServiceProps) => {
     }
 
     const calculateStartingPoints = () => {
-        console.log('recalc')
         if (!drawingContext) return
 
         const canvasWidth = drawingContext.canvas.width
@@ -74,6 +72,7 @@ export const useDrawingService = (props: DrawingServiceProps) => {
     }
 
     const drawEmptyBoard = (): void => {
+        beginPath()
         simulationBoard.getBoard().forEach(row => {
             row.forEach(cell => {
                 const walls = cell.getWalls()
@@ -101,6 +100,7 @@ export const useDrawingService = (props: DrawingServiceProps) => {
                 }
             })
         })
+        commitStrokes()
     }
 
     const drawLine = (
@@ -108,10 +108,18 @@ export const useDrawingService = (props: DrawingServiceProps) => {
         to: Coordinate
     ): void => {
         if (!drawingContext) return
-        drawingContext.beginPath()
         drawingContext.lineWidth = 2
         drawingContext.moveTo(from.x, from.y)
         drawingContext.lineTo(to.x, to.y)
+    }
+
+    const beginPath = () => {
+        if (!drawingContext) return
+        drawingContext.beginPath()
+    }
+
+    const commitStrokes = () => {
+        if (!drawingContext) return
         drawingContext.stroke()
     }
 
@@ -120,8 +128,6 @@ export const useDrawingService = (props: DrawingServiceProps) => {
         drawingContext.save()
         const canvas = drawingContext.canvas
         resizeCanvas(canvas)
-        const { width, height } = canvas
-        drawingContext.clearRect(0, 0, width, height)
     }
 
     const postdraw = (): void => {
@@ -130,45 +136,32 @@ export const useDrawingService = (props: DrawingServiceProps) => {
     }
 
     const drawRectangles = (): void => {
-        for (let y = 0; y < simulationBoard.getBoardHeight(); y++) {
-            for (let x = 0; x < simulationBoard.getBoardWidth(); x++) {
-                const simulationBoardCell = simulationBoard.getBoard()[y][x]
-                const cellStartingCoordinate = simulationBoardCell.getStartingCoordinate()
-                cellStartingCoordinate &&
-                    drawRectangle(
-                        cellStartingCoordinate,
-                        simulationBoardCell.getState()
-                    )
+        if (!drawingContext) return
+        Object.values(CellState).filter(obj => typeof obj === 'string').forEach(value => {
+            const fillStyle = COLOR_MAP.get(value)
+            if (fillStyle) {
+                drawingContext.fillStyle = fillStyle
             }
-        }
+            const startCoords = getStartingCoordinatesOfState(value, simulationBoard)
+            startCoords.forEach(startCoord => {
+                if (startCoord) {
+                    drawingContext.fillRect(startCoord.x, startCoord.y, blockSide, blockSide)
+                }
+            })
+        })
     }
 
-    const drawRectangle = (startPoint: Coordinate, cellState: CellState): void => {
-        if (!drawingContext) return
-        switch (cellState) {
-        case CellState.AIR:
-            drawingContext.fillStyle = boardColors.air
-            break
-        case CellState.UNVISITED:
-            drawingContext.fillStyle = boardColors.unvisited
-            break
-        case CellState.VISITED:
-            drawingContext.fillStyle = boardColors.visited
-            break
-        case CellState.PLAYER:
-            drawingContext.fillStyle = boardColors.player
-            break
-        case CellState.ENTRY:
-            drawingContext.fillStyle = 'rgba(50, 0, 255, 0.5)'
-            break
-        case CellState.EXIT:
-            drawingContext.fillStyle = 'rgba(255, 0, 0, 0.5)'
-            break
-        default:
-            console.log('Reached unsuported fill style')
+    const getStartingCoordinatesOfState = (state: CellState | string, board: Maze) => {
+        const startCoords = []
+        for (let y = 0; y < board.getBoardHeight(); y++) {
+            for (let x = 0; x < board.getBoardWidth(); x++) {
+                const simulationBoardCell = simulationBoard.getBoard()[y][x]
+                if (simulationBoardCell.getState() === state) {
+                    startCoords.push(simulationBoardCell.getStartingCoordinate())
+                }
+            }
         }
-
-        drawingContext.fillRect(startPoint.x, startPoint.y, blockSide, blockSide)
+        return startCoords
     }
 
     return {

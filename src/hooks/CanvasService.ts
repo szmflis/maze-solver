@@ -1,5 +1,6 @@
 import { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { useDrawingService } from './DrawingService'
+import { useGraphicalHelperService } from './GraphicalHelperService'
 
 export const useCanvasService =
     (): MutableRefObject<HTMLCanvasElement> => {
@@ -33,7 +34,3 @@ export const useCanvasService =
 
         return canvasRef
     }
-
-/*
-        16s as commited
-*/
