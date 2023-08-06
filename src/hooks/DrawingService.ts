@@ -9,7 +9,13 @@ import { Maze } from '../classes/model/Maze'
 import { CellState } from '../classes/model/Cell'
 import { useGraphicalHelperService } from './GraphicalHelperService'
 
-export const useDrawingService = () => {
+interface DrawingServiceProps {
+    drawingContext: CanvasRenderingContext2D | null
+}
+
+export const useDrawingService = (props: DrawingServiceProps) => {
+
+    const { drawingContext } = props
 
     const simulationBoard = useSelector<AppState, Maze>((state) => state.boardReducer.board)
 
@@ -19,32 +25,20 @@ export const useDrawingService = () => {
 
     useEffect(() => {
         calculateStartingPoints()
-    }, [
-        graphicalHelperService.getDrawingContext()?.canvas.width,
-        simulationBoard.getBoardWidth(),
-        simulationBoard.getBoardHeight()
-    ])
-
-    // useEffect(() => {
-    //     calculateStartingPoints()
-    // }, [simulationBoard.getBoardWidth(), simulationBoard.getBoardHeight()])
+    }, [graphicalHelperService])
 
     const draw = (): void => {
-        // calculateStartingPoints()
         translateBoard()
         drawRectangles()
         drawEmptyBoard()
     }
 
     const calculateStartingPoints = () => {
-        console.log('recalc!!')
-        const drawingContext = graphicalHelperService.getDrawingContext()
+        console.log('recalc')
         if (!drawingContext) return
 
         const canvasWidth = drawingContext.canvas.width
         const canvasHeight = drawingContext.canvas.height
-
-        console.log(canvasHeight, canvasWidth)
 
         const boardWidth = simulationBoard.getBoardWidth() + 1
         const boardHeight = simulationBoard.getBoardHeight() + 1
@@ -71,7 +65,6 @@ export const useDrawingService = () => {
     }
 
     const translateBoard = () => {
-        const drawingContext = graphicalHelperService.getDrawingContext()
         if (!drawingContext) return
 
         const widthLeft = drawingContext.canvas.width - (simulationBoard.getBoardWidthInPx() + blockSide)
@@ -110,21 +103,10 @@ export const useDrawingService = () => {
         })
     }
 
-    // const shouldRecalculateStartingPoints = () => {
-    //     if (simulationBoard.getBoardHeight() + 1 !== simulationBoard.getBoard().length) {
-    //         return true
-    //     }
-    //     if (simulationBoard.getBoardWidth() + 1 !== simulationBoard.getBoard()[0].length) {
-    //         return true
-    //     }
-    //     return false
-    // }
-
     const drawLine = (
         from: Coordinate,
         to: Coordinate
     ): void => {
-        const drawingContext = graphicalHelperService.getDrawingContext()
         if (!drawingContext) return
         drawingContext.beginPath()
         drawingContext.lineWidth = 2
@@ -134,7 +116,6 @@ export const useDrawingService = () => {
     }
 
     const predraw = (): void => {
-        const drawingContext = graphicalHelperService.getDrawingContext()
         if (!drawingContext) return
         drawingContext.save()
         const canvas = drawingContext.canvas
@@ -144,7 +125,6 @@ export const useDrawingService = () => {
     }
 
     const postdraw = (): void => {
-        const drawingContext = graphicalHelperService.getDrawingContext()
         if (!drawingContext) return
         drawingContext.restore()
     }
@@ -164,7 +144,6 @@ export const useDrawingService = () => {
     }
 
     const drawRectangle = (startPoint: Coordinate, cellState: CellState): void => {
-        const drawingContext = graphicalHelperService.getDrawingContext()
         if (!drawingContext) return
         switch (cellState) {
         case CellState.AIR:

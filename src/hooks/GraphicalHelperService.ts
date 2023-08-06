@@ -4,18 +4,18 @@ import { AppState } from '../store'
 
 export const useGraphicalHelperService = () => {
 
-    const graphicsState = useSelector((state: AppState) => state.graphicsReducer)
+    // const graphicsState = useSelector((state: AppState) => state.graphicsReducer)
 
-    const setDrawingContext = (drawingContext: CanvasRenderingContext2D): void => {
-        graphicsActionDispatcher.setDrawingContext(drawingContext)
-    }
+    // const setDrawingContext = (drawingContext: CanvasRenderingContext2D): void => {
+    //     graphicsActionDispatcher.setDrawingContext(drawingContext)
+    // }
 
-    const getDrawingContext = (): CanvasRenderingContext2D | null => {
-        return graphicsState.drawingContext
-    }
+    // const getDrawingContext = (): CanvasRenderingContext2D | null => {
+    //     return graphicsState.drawingContext
+    // }
 
     return {
-        setDrawingContext,
-        getDrawingContext
+        // setDrawingContext,
+        // getDrawingContext
     }
 }

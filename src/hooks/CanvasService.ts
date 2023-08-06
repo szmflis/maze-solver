@@ -1,6 +1,5 @@
-import { MutableRefObject, useEffect, useRef } from 'react'
+import { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { useDrawingService } from './DrawingService'
-import { useGraphicalHelperService } from './GraphicalHelperService'
 
 export const useCanvasService =
     (): MutableRefObject<HTMLCanvasElement> => {
@@ -8,30 +7,33 @@ export const useCanvasService =
         const canvasRef = useRef<HTMLCanvasElement>(null) as
             React.MutableRefObject<HTMLCanvasElement>
 
-        const graphicalHelperService = useGraphicalHelperService()
+        const [drawingContext, setDrawingContext] =
+            useState<CanvasRenderingContext2D | null>(null)
 
-        const drawingService = useDrawingService()
+        const drawingService = useDrawingService({ drawingContext })
 
         useEffect(() => {
             const canvas = canvasRef.current
             if (canvas == null) return
             const context = canvas.getContext('2d')
             if (context == null) return
-            graphicalHelperService.setDrawingContext(context)
-        }, [])
-
-        useEffect(() => {
-            if (graphicalHelperService.getDrawingContext()) {
-                requestAnimationFrame(render)
+            setDrawingContext(context)
+            const animationFrameId = render()
+            return () => {
+                window.cancelAnimationFrame(animationFrameId)
             }
-        })
+        }, [drawingService.draw])
 
-        const render = (): void => {
+        const render = (): number => {
             drawingService.predraw()
             drawingService.draw()
             drawingService.postdraw()
-            requestAnimationFrame(render)
+            return window.requestAnimationFrame(render)
         }
 
         return canvasRef
     }
+
+/*
+        16s as commited
+*/
