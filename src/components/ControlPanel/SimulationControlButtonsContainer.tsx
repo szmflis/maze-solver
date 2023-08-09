@@ -1,22 +1,21 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { AppState } from '../../store'
-import { simulationActionDispatcher } from '../../store/simulation/actions'
 import { theme } from '../../styles/theme'
 import { FlexBox } from '../FlexBox/FlexBox'
 import { Button } from '../Button/Button'
-import { statisticsActionDispatcher } from '../../store/statistics/actions'
 import { useSimulationRunnerService } from '../../hooks/SimulationRunnerService'
 import { useBoardService } from '../../hooks/BoardService'
+import { useSimulationService } from '../../hooks/SimulationService'
+import { useStatisticsService } from '../../hooks/StatisticsService'
 
 export const SimulationControlButtonsContainer: React.FC = () => {
-    const simulationState = useSelector((state: AppState) => state.simulationReducer)
-    const simulationService = useSimulationRunnerService()
+    const simulationRunnerService = useSimulationRunnerService()
+    const simulationService = useSimulationService()
     const boardService = useBoardService()
+    const statisticsService = useStatisticsService()
 
     const resetSimulation = () => {
-        simulationActionDispatcher.resetSimulation()
-        statisticsActionDispatcher.clearStepStack()
+        simulationService.resetSimulation()
+        statisticsService.clearStepStack()
         boardService.resetBoard()
     }
 
@@ -27,14 +26,14 @@ export const SimulationControlButtonsContainer: React.FC = () => {
             marginTop={theme.space[2]}
         >
             <Button
-                onClick={() => simulationActionDispatcher.startSimulation()}
-                disabled={simulationState.isRunning}
+                onClick={() => simulationService.startSimulation()}
+                disabled={simulationService.isSimulationRunning()}
                 variant='primary'
             >
                         Start
             </Button>
             <Button
-                onClick={() => simulationActionDispatcher.stopSimulation()}
+                onClick={() => simulationService.stopSimulation()}
                 variant='warning'
             >
                         Stop
@@ -42,13 +41,13 @@ export const SimulationControlButtonsContainer: React.FC = () => {
             <Button
                 onClick={() => resetSimulation()}
                 variant='cancel'
-                disabled={simulationState.isRunning}
+                disabled={simulationService.isSimulationRunning()}
             >
                         Reset
             </Button>
             <Button
-                onClick={() => simulationService.step()}
-                disabled={simulationState.isRunning}
+                onClick={() => simulationRunnerService.step()}
+                disabled={simulationService.isSimulationRunning()}
                 variant='primary'
             >
                         Step

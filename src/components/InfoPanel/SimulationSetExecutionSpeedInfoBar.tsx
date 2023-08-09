@@ -1,11 +1,9 @@
 import React from 'react'
 import { Paragraph, Span } from '../Typography/Typography'
-import { useSelector } from 'react-redux'
-import { AppState } from '../../store'
+import { useSimulationService } from '../../hooks/SimulationService'
 
 export const SimulationSetExecutionSpeedInfoBar: React.FC = () => {
-    const simulationState = useSelector((state: AppState) =>
-        state.simulationReducer)
+    const simulationService = useSimulationService()
 
     return (
         <Paragraph p={1}>
@@ -13,7 +11,7 @@ export const SimulationSetExecutionSpeedInfoBar: React.FC = () => {
                 textColor='red'
                 fontWeight={'bold'}
             >
-                {simulationState.simulationSpeed}ms
+                {simulationService.getSimulationSpeed()}ms
             </Span>
         </Paragraph>
     )

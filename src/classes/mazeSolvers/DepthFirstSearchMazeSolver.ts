@@ -17,14 +17,20 @@ export class DepthFirstSearchMazeSolver implements MazeSolver {
 
     private readonly simulationMaze: Maze
     private position: Coordinate
+    private isAlgorithmFinished: boolean
 
     constructor (maze: Maze, startingPosition: Coordinate) {
         this.simulationMaze = maze
         this.position = startingPosition
+        this.isAlgorithmFinished = false
     }
 
     public step (): Maze {
         return this.generateNewMaze(this.position)
+    }
+
+    public getIsAlgorithmFinished (): boolean {
+        return this.isAlgorithmFinished
     }
 
     private generateNewMaze (fromCoord: Coordinate): Maze {
@@ -50,7 +56,7 @@ export class DepthFirstSearchMazeSolver implements MazeSolver {
 
     private finishGeneration () {
         console.log('Generation finished!')
-        simulationActionDispatcher.finishSimulation()
+        this.isAlgorithmFinished = true
     }
 
     private moveToUnvisitedDirection (

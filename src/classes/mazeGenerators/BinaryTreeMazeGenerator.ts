@@ -1,5 +1,4 @@
 import { Direction } from '../../enums/Direction'
-import { simulationActionDispatcher } from '../../store/simulation/actions'
 import { Coordinate } from '../../utils/Coordinate'
 import { BinaryTreeTerminalLogger } from './BinaryTreeTerminalLogger'
 import { MazeGenerator } from '../model/MazeGenerator'
@@ -7,17 +6,21 @@ import { Maze } from '../model/Maze'
 import { CellState } from '../model/Cell'
 
 export class BinaryTreeMazeGenerator implements MazeGenerator {
+
     private readonly simulationBoard: Maze
     private position: Coordinate
     private logger: BinaryTreeTerminalLogger
+    private isAlgorithmFinished: boolean
 
     constructor (board: Maze, startingPosition: Coordinate) {
         this.simulationBoard = board
         this.position = startingPosition
         this.logger = new BinaryTreeTerminalLogger()
+        this.isAlgorithmFinished = false
     }
 
-    public getIsAlgorithmFinished = () => false
+    public getIsAlgorithmFinished = () =>
+        this.isAlgorithmFinished
 
     public step (): Maze {
         this.logger = new BinaryTreeTerminalLogger()
@@ -26,7 +29,7 @@ export class BinaryTreeMazeGenerator implements MazeGenerator {
         return this.simulationBoard
     }
 
-    generateNewBoard () {
+    private generateNewBoard () {
         this.simulationBoard.setCellState(this.position, CellState.VISITED)
         const availableDirections: Direction[] = this.getDirections(this.position)
         const randomDirection = this.getRandomDirection(availableDirections)
@@ -46,21 +49,37 @@ export class BinaryTreeMazeGenerator implements MazeGenerator {
         return this.simulationBoard
     }
 
-    setNewPosition () {
-        if (this.position.x === this.simulationBoard.getBoardWidth() - 1 &&
-            this.position.y === this.simulationBoard.getBoardHeight() - 1) {
+    private setNewPosition () {
+        if (this.isAtEndOfGeneration()) {
             this.finishGeneration()
-        }
-        if (this.position.x === this.simulationBoard.getBoardWidth() - 1) {
-            this.position = new Coordinate(0, this.position.y + 1)
+        } else if (this.isAtEndOfRow()) {
+            this.moveToNextRow()
         } else {
-            this.position = new Coordinate(this.position.x + 1, this.position.y)
+            this.moveToNextColumn()
         }
-        this.simulationBoard.setCellState(this.position, CellState.PLAYER)
         this.logger.movedToStep(this.position)
+        console.log('setting ', this.position, ' to player')
+        this.simulationBoard.setCellState(this.position, CellState.PLAYER)
     }
 
-    getDirections (forCoordinate: Coordinate): Direction[] {
+    private isAtEndOfGeneration (): boolean {
+        return this.position.x === this.simulationBoard.getBoardWidth() - 1 &&
+            this.position.y === this.simulationBoard.getBoardHeight() - 1
+    }
+
+    private moveToNextRow (): void {
+        this.position = new Coordinate(0, this.position.y + 1)
+    }
+
+    private moveToNextColumn (): void {
+        this.position = new Coordinate(this.position.x + 1, this.position.y)
+    }
+
+    private isAtEndOfRow (): boolean {
+        return this.position.x === this.simulationBoard.getBoardWidth() - 1
+    }
+
+    private getDirections (forCoordinate: Coordinate): Direction[] {
         const right: Direction = {
             cell: this.simulationBoard.getBoardCellAt(forCoordinate.x + 1, forCoordinate.y),
             direction: 'RIGHT'
@@ -72,13 +91,13 @@ export class BinaryTreeMazeGenerator implements MazeGenerator {
         return [right, bottom]
     }
 
-    getRandomDirection (directions: Direction[]): Direction {
+    private getRandomDirection (directions: Direction[]): Direction {
         const randomInt = Math.floor(Math.random() * Object.keys(directions).length)
         return Object.values(directions)[randomInt]
     }
 
-    finishGeneration () {
-        simulationActionDispatcher.finishSimulation()
+    private finishGeneration () {
+        this.isAlgorithmFinished = true
         this.logger.addGenerationFinish()
     }
 }

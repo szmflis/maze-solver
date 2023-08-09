@@ -1,21 +1,21 @@
-import { useSelector } from 'react-redux'
-import { AppState } from '../store'
 import { Coordinate } from '../utils/Coordinate'
 import { useEffect, useState } from 'react'
 import { DepthFirstSearchMazeSolver } from '../classes/mazeSolvers/DepthFirstSearchMazeSolver'
 import { MazeSolver } from '../classes/model/MazeSolver'
+import { useSimulationService } from './SimulationService'
+import { useBoardService } from './BoardService'
 
 export const useMazeSolvingService = () => {
-    const simulationState = useSelector((state: AppState) => state.simulationReducer)
-    const boardState = useSelector((state: AppState) => state.boardReducer)
+    const simulationService = useSimulationService()
+    const boardService = useBoardService()
 
     const [mazeSolver, setMazeSolver] = useState<MazeSolver>(
-        new DepthFirstSearchMazeSolver(boardState.board, new Coordinate(0, 0)))
+        new DepthFirstSearchMazeSolver(boardService.getBoard(), new Coordinate(0, 0)))
 
     useEffect(() => {
         const entryCoordinate = new Coordinate(0, 0)
-        setMazeSolver(new DepthFirstSearchMazeSolver(boardState.board, entryCoordinate))
-    }, [boardState.board, simulationState.simulationMode])
+        setMazeSolver(new DepthFirstSearchMazeSolver(boardService.getBoard(), entryCoordinate))
+    }, [boardService.getBoard(), simulationService.getSimulationMode()])
 
     return mazeSolver
 }

@@ -52,13 +52,12 @@ export const Terminal: React.FC = () => {
 
 /*
     TODO:
-        optimize rendering, refactor DrawingService etc.. mess
-        maze saving&loading
+        refacor
+            dispatches only through services
+        UI/UX
+            make sure to disable stuff based on whats generated
         maze gen algos
         maze solve algos
 
-    15x15 12s as commited
-    15x15 8s with stroke lines optimized
-    15x15 sub8 with rectangles drawn by color instead of position and not clearing
-
+        maze saving&loading
 */

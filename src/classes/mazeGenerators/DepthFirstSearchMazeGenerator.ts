@@ -97,12 +97,8 @@ export class DepthFirstSearchMazeGenerator implements MazeGenerator {
         return inputBoard
     }
 
-    private readonly finishAlgorithm = (): void => {
-        this.isAlogrithmFinished = true
-    }
-
     private finishGeneration () {
+        this.isAlogrithmFinished = true
         this.logger.addGenerationFinish()
-        this.finishAlgorithm()
     }
 }

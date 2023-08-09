@@ -59,7 +59,6 @@ export class Maze {
 
     setCellState (coordinate: Coordinate, state: CellState, debug?: boolean): void {
         if (coordinate.y >= this.getBoardHeight() || coordinate.y < 0) {
-            console.log('Trying to set ', coordinate, 'to ', state)
             console.log('setCellState() y ', coordinate.y, ' outside of board height ', this.getBoardHeight())
             return
         }

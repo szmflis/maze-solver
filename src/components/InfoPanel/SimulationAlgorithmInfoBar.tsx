@@ -1,7 +1,6 @@
 import React from 'react'
 import { Paragraph, Span } from '../Typography/Typography'
-import { useSelector } from 'react-redux'
-import { AppState } from '../../store'
+import { useSimulationService } from '../../hooks/SimulationService'
 
 export const simulationAlgorithmDescriptionMapper = {
     BINARY_TREE: 'Binary Tree',
@@ -9,8 +8,8 @@ export const simulationAlgorithmDescriptionMapper = {
 }
 
 export const SimulationAlgorithmInfoBar: React.FC = () => {
-    const simulationState = useSelector((state: AppState) =>
-        state.simulationReducer)
+
+    const simulationService = useSimulationService()
 
     return (
         <Paragraph p={1}>
@@ -18,7 +17,7 @@ export const SimulationAlgorithmInfoBar: React.FC = () => {
                 textColor='red'
                 fontWeight={'bold'}
             >
-                {simulationAlgorithmDescriptionMapper[simulationState.mazeGenerationAlgorithm]}
+                {simulationAlgorithmDescriptionMapper[simulationService.getSimulationAlgorithm()]}
             </Span>
         </Paragraph>
     )

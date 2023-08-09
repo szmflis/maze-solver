@@ -3,6 +3,7 @@ import { AppState } from '../store'
 import { boardActionDispatcher } from '../store/board/actions'
 import { Coordinate } from '../utils/Coordinate'
 import { CellState } from '../classes/model/Cell'
+import { Maze } from '../classes/model/Maze'
 
 export const useBoardService = () => {
     const boardState = useSelector((state: AppState) => state.boardReducer)
@@ -64,16 +65,27 @@ export const useBoardService = () => {
         return boardState.board.getBoardHeightInPx()
     }
 
+    const setBoard = (newBoard: Maze) => {
+        boardActionDispatcher.setBoard(newBoard)
+    }
+
+    const setBoardCellState = (coordinate: Coordinate, cellState: CellState) => {
+        boardActionDispatcher.setBoardCellState(coordinate, cellState)
+    }
+
     return {
         getBoardWidth,
         getBoardHeight,
         setBoardWidth,
         setBoardHeight,
         getBoard,
+        setBoard,
         resetBoard,
         unvisitBoardWithEntryAndExit,
         setBoardStartingPoints,
         getBoardWidthInPx,
-        getBoardHeightInPx
+        getBoardHeightInPx,
+        setBoardCellState,
+        unvisitEntireBoard
     }
 }

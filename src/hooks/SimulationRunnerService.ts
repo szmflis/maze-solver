@@ -1,32 +1,31 @@
-import { useSelector } from 'react-redux'
-import { AppState } from '../store'
-import { simulationActionDispatcher } from '../store/simulation/actions'
 import { useInterval } from './useInterval'
-import { boardActionDispatcher } from '../store/board/actions'
-import { statisticsActionDispatcher } from '../store/statistics/actions'
 import { useMazeGeneratingService } from './MazeGeneratingService'
 import { useMazeSolvingService } from './MazeSolvingService'
 import { Coordinate } from '../utils/Coordinate'
 import { CellState } from '../classes/model/Cell'
+import { useSimulationService } from './SimulationService'
+import { useBoardService } from './BoardService'
 
 export const useSimulationRunnerService = () => {
-    const simulationState = useSelector((state: AppState) => state.simulationReducer)
     const mazeGenerator = useMazeGeneratingService()
     const mazeSolver = useMazeSolvingService()
+    const simulationService = useSimulationService()
+    const boardService = useBoardService()
 
     useInterval(() => {
         step()
-        statisticsActionDispatcher.setMeasuredExecutionTime(10)
-    }, simulationState.isRunning ? simulationState.simulationSpeed : null)
+    }, simulationService.isSimulationRunning()
+        ? simulationService.getSimulationSpeed()
+        : null)
 
     const step = () => {
-        switch (simulationState.simulationMode) {
+        switch (simulationService.getSimulationMode()) {
         case 'MAZE_DRAW':
             console.error('Simulation drawing not implemented!')
             break
         case 'MAZE_GEN':
-            if (simulationState.simulationStep === 0) {
-                boardActionDispatcher.unvisitEntireBoard()
+            if (simulationService.getSimulationStep() === 0) {
+                boardService.unvisitEntireBoard()
             }
             mazeGenerationStep()
             break
@@ -38,18 +37,23 @@ export const useSimulationRunnerService = () => {
 
     const mazeSolvingStep = () => {
         const board = mazeSolver.step()
-        boardActionDispatcher.setBoard(board)
-        simulationActionDispatcher.incrementSimulationStep()
+        boardService.setBoard(board)
+        simulationService.incrementSimmulationStep()
+        if (mazeSolver.getIsAlgorithmFinished()) {
+            simulationService.finishSimulation()
+        }
     }
 
     const mazeGenerationStep = () => {
         const board = mazeGenerator.step()
-        boardActionDispatcher.setBoard(board)
-        simulationActionDispatcher.incrementSimulationStep()
+        boardService.setBoard(board)
+        simulationService.incrementSimmulationStep()
         if (mazeGenerator.getIsAlgorithmFinished()) {
-            simulationActionDispatcher.finishSimulation()
+            simulationService.finishSimulation()
             const bottomRight = new Coordinate(board.getBoardWidth() - 1, board.getBoardHeight() - 1)
-            boardActionDispatcher.setBoardCellState(bottomRight, CellState.EXIT)
+            boardService.setBoardCellState(bottomRight, CellState.EXIT)
+            const topLeft = new Coordinate(0, 0)
+            boardService.setBoardCellState(topLeft, CellState.ENTRY)
         }
     }
 

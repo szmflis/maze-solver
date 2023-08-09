@@ -1,31 +1,31 @@
-import { useSelector } from 'react-redux'
-import { AppState } from '../store'
 import { MazeGenerator } from '../classes/model/MazeGenerator'
 import { Coordinate } from '../utils/Coordinate'
 import { useEffect, useState } from 'react'
 import { BinaryTreeMazeGenerator } from '../classes/mazeGenerators/BinaryTreeMazeGenerator'
 import { DepthFirstSearchMazeGenerator } from '../classes/mazeGenerators/DepthFirstSearchMazeGenerator'
+import { useBoardService } from './BoardService'
+import { useSimulationService } from './SimulationService'
 
 export const useMazeGeneratingService = () => {
-    const simulationState = useSelector((state: AppState) => state.simulationReducer)
-    const boardState = useSelector((state: AppState) => state.boardReducer)
+    const boardService = useBoardService()
+    const simulationService = useSimulationService()
 
     const [mazeGen, setMazeGen] = useState<MazeGenerator>(
-        new DepthFirstSearchMazeGenerator(boardState.board, new Coordinate(0, 0)))
+        new DepthFirstSearchMazeGenerator(boardService.getBoard(), new Coordinate(0, 0)))
 
     useEffect(() => {
         const entryCoordinate = new Coordinate(0, 0)
-        switch (simulationState.mazeGenerationAlgorithm) {
+        switch (simulationService.getSimulationAlgorithm()) {
         case 'DEPTH_FIRST_SEARCH':
-            setMazeGen(new DepthFirstSearchMazeGenerator(boardState.board, entryCoordinate))
+            setMazeGen(new DepthFirstSearchMazeGenerator(boardService.getBoard(), entryCoordinate))
             break
         case 'BINARY_TREE':
-            setMazeGen(new BinaryTreeMazeGenerator(boardState.board, entryCoordinate))
+            setMazeGen(new BinaryTreeMazeGenerator(boardService.getBoard(), entryCoordinate))
             break
         default:
-            setMazeGen(new DepthFirstSearchMazeGenerator(boardState.board, entryCoordinate))
+            setMazeGen(new DepthFirstSearchMazeGenerator(boardService.getBoard(), entryCoordinate))
         }
-    }, [boardState.board, simulationState.mazeGenerationAlgorithm])
+    }, [boardService.getBoard(), simulationService.getSimulationAlgorithm()])
 
     return mazeGen
 }

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Paragraph, Span } from '../Typography/Typography'
-import { useSelector } from 'react-redux'
-import { AppState } from '../../store'
+import { useSimulationService } from '../../hooks/SimulationService'
 
 export const simulationModeDescriptionMapper = {
     MAZE_GEN: 'Maze Generation',
@@ -10,8 +9,7 @@ export const simulationModeDescriptionMapper = {
 }
 
 export const SimulationModeInfoBar: React.FC = () => {
-    const simulationState = useSelector((state: AppState) =>
-        state.simulationReducer)
+    const simulationService = useSimulationService()
 
     return (
         <Paragraph p={1}>
@@ -19,7 +17,7 @@ export const SimulationModeInfoBar: React.FC = () => {
                 textColor='red'
                 fontWeight={'bold'}
             >
-                {simulationModeDescriptionMapper[simulationState.simulationMode]}
+                {simulationModeDescriptionMapper[simulationService.getSimulationMode()]}
             </Span>
         </Paragraph>
     )
