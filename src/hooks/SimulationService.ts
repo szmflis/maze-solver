@@ -60,6 +60,10 @@ export const useSimulationService = () => {
         simulationActionDispatcher.setSimulationModeAlogrithm(simMode)
     }
 
+    const setMazeGeneratingAlgorithm = (mazeGenAlg: MazeGenAlgorithm) => {
+        simulationActionDispatcher.setMazeGeneratingAlogrithm(mazeGenAlg)
+    }
+
     return {
         shouldDisableSimulationControls,
         getSimulationSpeed,
@@ -73,6 +77,7 @@ export const useSimulationService = () => {
         resetSimulation,
         stopSimulation,
         startSimulation,
-        setSimulationMode
+        setSimulationMode,
+        setMazeGeneratingAlgorithm
     }
 }

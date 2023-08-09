@@ -4,12 +4,9 @@ import { Sliders } from './Sliders'
 import { SimulationControlButtonsContainer } from './SimulationControlButtonsContainer'
 import { AlgorithmSelector } from './AlgorithmSelector'
 import { SimulationModeButtonsContainer } from './SimulationModeButtonsContainer'
-import { useQuickMazeGenerator } from '../../hooks/QuickMazeGenerator'
-import { Button } from '../Button/Button'
+import { QuickMazeGeneratorButton } from './MazeGeneratorButton'
 
-export const ControlPanel: React.FC = () => {
-    const quickMazeGen = useQuickMazeGenerator()
-
+export const ControlPanel: React.FC = React.memo(() => {
     return (
         <FlexBox
             flexDirection={'column'}
@@ -19,12 +16,7 @@ export const ControlPanel: React.FC = () => {
             <AlgorithmSelector />
             <Sliders />
             <SimulationControlButtonsContainer />
-            <Button
-                variant="primary"
-                onClick={() => quickMazeGen.quicklyGenerateMaze()}
-            >
-                quickgen
-            </Button>
+            <QuickMazeGeneratorButton />
         </FlexBox>
     )
-}
+})

@@ -52,9 +52,7 @@ export const RawSelect: React.FC<RawSelectProps> = ({
                 onClick={() => setIsActive(!isActive)}
                 disabled={disabled}
             >
-                {/* <Span> */}
                 {data[selectedOption].display}
-                {/* </Span> */}
                 <RotatingChevron type="chevron" textColor="primary" fontSize={5} isActive={isActive} />
             </button>
             {isActive && (

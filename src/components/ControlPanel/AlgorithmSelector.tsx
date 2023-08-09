@@ -3,9 +3,6 @@ import { FlexBox } from '../FlexBox/FlexBox'
 import { Option } from '../Select/RawSelect'
 import { Select } from '../Select/Select'
 import { MazeGenAlgorithm } from '../../store/simulation/types'
-import { simulationActionDispatcher } from '../../store/simulation/actions'
-import { useSelector } from 'react-redux'
-import { AppState } from '../../store'
 import { useSimulationService } from '../../hooks/SimulationService'
 
 interface MazeGenAlgorithmOption extends Option {
@@ -29,7 +26,7 @@ export const AlgorithmSelector: React.FC = () => {
     const simulationService = useSimulationService()
 
     useEffect(() => {
-        simulationActionDispatcher.setMazeGeneratingAlogrithm(ALGORITHM_OPTIONS[value1].value)
+        simulationService.setMazeGeneratingAlgorithm(ALGORITHM_OPTIONS[value1].value)
     }, [value1])
 
     return (
@@ -42,7 +39,6 @@ export const AlgorithmSelector: React.FC = () => {
                 selectedOption={value1}
                 setSelectedOption={setValue1}
                 disabled={simulationService.shouldDisableSimulationControls()}
-                // my={3}
             />
         </FlexBox>
     )

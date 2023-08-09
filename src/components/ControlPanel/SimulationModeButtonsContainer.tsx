@@ -34,14 +34,14 @@ export const SimulationModeButtonsContainer: React.FC = () => {
             <Button
                 onClick={() => setSimulationMode('MAZE_SOLVE')}
                 disabled={simulationService.isSimulationRunning()}
-                variant={simulationService.getSimulationMode() === 'MAZE_GEN' ? 'primary' : 'secondary'}
+                variant={simulationService.getSimulationMode() === 'MAZE_SOLVE' ? 'primary' : 'secondary'}
             >
                         Solving
             </Button>
             <Button
                 onClick={() => setSimulationMode('MAZE_DRAW')}
                 disabled={simulationService.isSimulationRunning()}
-                variant={simulationService.getSimulationMode() === 'MAZE_GEN' ? 'primary' : 'secondary'}
+                variant={simulationService.getSimulationMode() === 'MAZE_DRAW' ? 'primary' : 'secondary'}
             >
                         Drawing
             </Button>
