@@ -52,8 +52,6 @@ export const Terminal: React.FC = () => {
 
 /*
     TODO:
-        refacor
-            dispatches only through services
         UI/UX
             make sure to disable stuff based on whats generated
         maze gen algos

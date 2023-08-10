@@ -2,6 +2,10 @@ import { Coordinate } from '../../utils/Coordinate'
 import { Cell, CellState } from './Cell'
 
 export class Maze {
+    setBoardCellState (arg0: Coordinate, EXIT: CellState) {
+        throw new Error('Method not implemented.')
+    }
+
     private board: Cell[][]
 
     constructor (width: number, height: number, board?: Cell[][]) {
@@ -45,12 +49,12 @@ export class Maze {
         for (let y = 0; y < newHeight; y++) {
             const row: Cell[] = []
             for (let x = 0; x < newWidth; x++) {
-                const existingState = this.getBoardCellAt(x, y)
-                if (existingState != null) {
-                    row.push(existingState)
-                } else {
-                    row.push(new Cell(CellState.UNVISITED))
-                }
+                // const existingState = this.getBoardCellAt(x, y)
+                // if (existingState != null) {
+                //     row.push(existingState)
+                // } else {
+                row.push(new Cell(CellState.UNVISITED))
+                // }
             }
             newBoard.push(row)
         }
@@ -60,10 +64,6 @@ export class Maze {
     setCellState (coordinate: Coordinate, state: CellState, debug?: boolean): void {
         if (coordinate.y >= this.getBoardHeight() || coordinate.y < 0) {
             console.log('setCellState() y ', coordinate.y, ' outside of board height ', this.getBoardHeight())
-            return
-        }
-        if (coordinate.x >= this.getBoardWidth() || coordinate.x < 0) {
-            console.log('setCellState() x ', coordinate.x, ' outside of board width ', this.getBoardWidth())
             return
         }
         this.board[coordinate.y][coordinate.x].setState(state)

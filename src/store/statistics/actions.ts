@@ -17,6 +17,24 @@ const clearStepStack = (): ClearStepStackAction => ({
     type: 'ClearStepStack'
 })
 
+interface SetExecutionStartTimeAction extends Action<'SetExecutionStartTime'> {
+    executionStartTime: number
+}
+
+const setExecutionStartTime = (executionStartTime: number): SetExecutionStartTimeAction => ({
+    type: 'SetExecutionStartTime',
+    executionStartTime
+})
+
+interface SetExecutionEndTimeAction extends Action<'SetExecutionEndTime'> {
+    executionEndTime: number
+}
+
+const setExecutionEndTime = (executionEndTime: number): SetExecutionEndTimeAction => ({
+    type: 'SetExecutionEndTime',
+    executionEndTime
+})
+
 interface SetMeasuredExecutionTimeAction extends Action<'SetMeasuredExecutionTime'> {
     measuredExecutionTime: number
 }
@@ -29,12 +47,16 @@ const setMeasuredExecutionTime = (measuredExecutionTime: number): SetMeasuredExe
 export type StatisticActions = AddStepStackAction
     | ClearStepStackAction
     | SetMeasuredExecutionTimeAction
+    | SetExecutionStartTimeAction
+    | SetExecutionEndTimeAction
 
 export const statisticsActionDispatcher = bindActionCreators(
     {
         addStepStack,
         clearStepStack,
-        setMeasuredExecutionTime
+        setMeasuredExecutionTime,
+        setExecutionStartTime,
+        setExecutionEndTime
     },
     store.dispatch
 )

@@ -68,6 +68,16 @@ const setSimulationModeAlogrithm = (simMode: SimulationMode): SetSimulationModeA
     simMode
 })
 
+interface SetFinishedSimulationAction extends Action<'SetFinishedSimulation'> {
+    type: 'SetFinishedSimulation'
+    isFinished: boolean
+}
+
+const setSimulationFinished = (isFinished: boolean): SetFinishedSimulationAction => ({
+    type: 'SetFinishedSimulation',
+    isFinished
+})
+
 export type SimulationActions = StartSimulationAction
     | StopSimulationAction
     | ResetSimulationAction
@@ -76,6 +86,7 @@ export type SimulationActions = StartSimulationAction
     | SetMazeGeneratingAlgorithmAction
     | SetSimulationSpeedAction
     | SetSimulationModeAction
+    | SetFinishedSimulationAction
 
 export const simulationActionDispatcher = bindActionCreators(
     {
@@ -86,7 +97,8 @@ export const simulationActionDispatcher = bindActionCreators(
         finishSimulation,
         setMazeGeneratingAlogrithm,
         setSimulationSpeed,
-        setSimulationModeAlogrithm
+        setSimulationModeAlogrithm,
+        setSimulationFinished
     },
     store.dispatch
 )

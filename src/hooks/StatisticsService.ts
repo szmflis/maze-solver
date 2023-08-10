@@ -5,6 +5,15 @@ import { statisticsActionDispatcher } from '../store/statistics/actions'
 export const useStatisticsService = () => {
     const statisticsState = useSelector((state: AppState) => state.statisticsReducer)
 
+    const setAlgorithmExecutionStartTime = () => {
+        statisticsActionDispatcher.setExecutionStartTime(performance.now())
+    }
+
+    const setAlgorithmExecutionEndTime = () => {
+        const time = performance.now()
+        statisticsActionDispatcher.setExecutionEndTime(time)
+    }
+
     const setMeasuredExecutionTime = (measuredTime: number): void => {
         statisticsActionDispatcher.setMeasuredExecutionTime(measuredTime)
     }
@@ -15,6 +24,8 @@ export const useStatisticsService = () => {
 
     return {
         setMeasuredExecutionTime,
-        clearStepStack
+        clearStepStack,
+        setAlgorithmExecutionStartTime,
+        setAlgorithmExecutionEndTime
     }
 }

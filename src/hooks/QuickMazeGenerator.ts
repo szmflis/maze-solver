@@ -9,20 +9,17 @@ export const useQuickMazeGenerator = () => {
 
     const quicklyGenerateMaze = () => {
         let maze = new Maze(boardService.getBoardWidth(), boardService.getBoardHeight())
-        maze.setCellState(
-            new Coordinate(
-                boardService.getBoardWidth() - 1,
-                boardService.getBoardHeight() - 1),
+        maze.setCellState(new Coordinate(boardService.getBoardWidth() - 1, boardService.getBoardHeight() - 1),
             CellState.UNVISITED)
         const mazeGenAlgo = new DepthFirstSearchMazeGenerator(maze, new Coordinate(0, 0))
         while (!mazeGenAlgo.getIsAlgorithmFinished()) {
             maze = mazeGenAlgo.step()
         }
-        maze.setCellState(
-            new Coordinate(
-                boardService.getBoardWidth() - 1,
-                boardService.getBoardHeight() - 1),
+        maze.setBoardToUnvisited()
+        maze.setCellState(new Coordinate(boardService.getBoardWidth() - 1, boardService.getBoardHeight() - 1),
             CellState.EXIT)
+        maze.setCellState(new Coordinate(0, 0),
+            CellState.PLAYER)
         boardService.setBoard(maze)
     }
 

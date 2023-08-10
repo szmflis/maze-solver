@@ -8,6 +8,7 @@ export const QuickMazeGeneratorButton: React.FC = () => {
     return <Button
         variant="primary"
         onClick={() => quickMazeGen.quicklyGenerateMaze()}
+        mt={3}
     >
         quickgen
     </Button>

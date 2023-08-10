@@ -25,8 +25,7 @@ export const boardReducer: Reducer<BoardState, BoardActions> = (
     }
     case 'ChangeBoardWidth':
     {
-        const newBoard = new Maze(state.boardWidth, state.boardHeight, state.board.getBoard())
-        newBoard.setBoardDimenstions(newBoard.getBoardHeight(), action.newWidth)
+        const newBoard = new Maze(action.newWidth, state.boardHeight)
         return {
             ...state,
             boardWidth: action.newWidth,
@@ -35,8 +34,7 @@ export const boardReducer: Reducer<BoardState, BoardActions> = (
     }
     case 'ChangeBoardHeight':
     {
-        const newBoard = new Maze(state.boardWidth, state.boardHeight, state.board.getBoard())
-        newBoard.setBoardDimenstions(action.newHeight, newBoard.getBoardWidth())
+        const newBoard = new Maze(state.boardWidth, action.newHeight)
         return {
             ...state,
             boardHeight: action.newHeight,

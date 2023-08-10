@@ -16,7 +16,6 @@ export const useBoardService = () => {
 
     const setBoardWidth = (newWidth: number): void => {
         boardActionDispatcher.changeBoardWidth(newWidth)
-        unvisitEntireBoard()
         boardActionDispatcher.setBoardCellState(
             new Coordinate(newWidth - 1, getBoardHeight() - 1),
             CellState.EXIT)
@@ -27,7 +26,6 @@ export const useBoardService = () => {
 
     const setBoardHeight = (newHeight: number): void => {
         boardActionDispatcher.changeBoardHeight(newHeight)
-        unvisitEntireBoard()
         boardActionDispatcher.setBoardCellState(
             new Coordinate(getBoardWidth() - 1, newHeight - 1),
             CellState.EXIT)

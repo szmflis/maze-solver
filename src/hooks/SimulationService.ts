@@ -2,14 +2,22 @@ import { useSelector } from 'react-redux'
 import { AppState } from '../store'
 import { simulationActionDispatcher } from '../store/simulation/actions'
 import { MazeGenAlgorithm, SimulationMode } from '../store/simulation/types'
+import { useBoardService } from './BoardService'
 
 export const useSimulationService = () => {
     const simulationState = useSelector((state: AppState) => state.simulationReducer)
+
+    const boardService = useBoardService()
 
     const shouldDisableSimulationControls = (): boolean => {
         if (simulationState.isRunning) return true
         if (!simulationState.isRunning && simulationState.simulationStep !== 0) return true
         return false
+    }
+
+    const shouldDisableSimulationModeSwitcher = (): boolean => {
+        if (simulationState.simulationStep === 0) return false
+        return !simulationState.simulationFinished
     }
 
     const getSimulationSpeed = (): number => {
@@ -57,11 +65,20 @@ export const useSimulationService = () => {
     }
 
     const setSimulationMode = (simMode: SimulationMode): void => {
+        if (simMode === 'MAZE_GEN') {
+            boardService.resetBoard()
+        }
+        boardService.unvisitBoardWithEntryAndExit()
+        resetSimulation()
         simulationActionDispatcher.setSimulationModeAlogrithm(simMode)
     }
 
     const setMazeGeneratingAlgorithm = (mazeGenAlg: MazeGenAlgorithm) => {
         simulationActionDispatcher.setMazeGeneratingAlogrithm(mazeGenAlg)
+    }
+
+    const setIsSimulationFinished = (isFinished: boolean) => {
+        simulationActionDispatcher.setSimulationFinished(isFinished)
     }
 
     return {
@@ -78,6 +95,8 @@ export const useSimulationService = () => {
         stopSimulation,
         startSimulation,
         setSimulationMode,
-        setMazeGeneratingAlgorithm
+        setMazeGeneratingAlgorithm,
+        setIsSimulationFinished,
+        shouldDisableSimulationModeSwitcher
     }
 }

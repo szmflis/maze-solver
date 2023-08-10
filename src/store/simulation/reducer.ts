@@ -7,7 +7,8 @@ const initialSimulationState: SimulationState = {
     simulationStep: 0,
     mazeGenerationAlgorithm: 'BINARY_TREE',
     simulationSpeed: 1,
-    simulationMode: 'MAZE_GEN'
+    simulationMode: 'MAZE_GEN',
+    simulationFinished: false
 }
 
 export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
@@ -44,7 +45,8 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     case 'FinishSimulation': {
         return {
             ...state,
-            isRunning: false
+            isRunning: false,
+            simulationFinished: true
         }
     }
     case 'SetMazeGeneratingAlgorithm': {
@@ -63,6 +65,12 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
         return {
             ...state,
             simulationMode: action.simMode
+        }
+    }
+    case 'SetFinishedSimulation': {
+        return {
+            ...state,
+            simulationFinished: action.isFinished
         }
     }
     default:

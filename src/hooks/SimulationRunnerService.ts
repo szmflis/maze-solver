@@ -5,12 +5,14 @@ import { Coordinate } from '../utils/Coordinate'
 import { CellState } from '../classes/model/Cell'
 import { useSimulationService } from './SimulationService'
 import { useBoardService } from './BoardService'
+import { useStatisticsService } from './StatisticsService'
 
 export const useSimulationRunnerService = () => {
     const mazeGenerator = useMazeGeneratingService()
     const mazeSolver = useMazeSolvingService()
     const simulationService = useSimulationService()
     const boardService = useBoardService()
+    const statisticsService = useStatisticsService()
 
     useInterval(() => {
         step()
@@ -20,16 +22,17 @@ export const useSimulationRunnerService = () => {
 
     const step = () => {
         switch (simulationService.getSimulationMode()) {
-        case 'MAZE_DRAW':
-            console.error('Simulation drawing not implemented!')
-            break
         case 'MAZE_GEN':
             if (simulationService.getSimulationStep() === 0) {
                 boardService.unvisitEntireBoard()
+                statisticsService.setAlgorithmExecutionStartTime()
             }
             mazeGenerationStep()
             break
         case 'MAZE_SOLVE':
+            if (simulationService.getSimulationStep() === 0) {
+                statisticsService.setAlgorithmExecutionStartTime()
+            }
             mazeSolvingStep()
             break
         }
@@ -41,6 +44,7 @@ export const useSimulationRunnerService = () => {
         simulationService.incrementSimmulationStep()
         if (mazeSolver.getIsAlgorithmFinished()) {
             simulationService.finishSimulation()
+            statisticsService.setAlgorithmExecutionEndTime()
         }
     }
 
@@ -54,6 +58,7 @@ export const useSimulationRunnerService = () => {
             boardService.setBoardCellState(bottomRight, CellState.EXIT)
             const topLeft = new Coordinate(0, 0)
             boardService.setBoardCellState(topLeft, CellState.ENTRY)
+            statisticsService.setAlgorithmExecutionEndTime()
         }
     }
 

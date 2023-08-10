@@ -13,7 +13,7 @@ export const SimulationMeasuredExecutionSpeedInfoBar: React.FC = () => {
                 textColor='red'
                 fontWeight={'bold'}
             >
-                {statisticsState.measuredSpeed}ms
+                {statisticsState.measuredAlgorithmExecutionTime}ms
             </Span>
         </Paragraph>
     )
