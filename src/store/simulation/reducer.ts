@@ -5,7 +5,7 @@ import { SimulationState } from './types'
 const initialSimulationState: SimulationState = {
     isRunning: false,
     simulationStep: 0,
-    mazeGenerationAlgorithm: 'BINARY_TREE',
+    selectedAlgorithm: 'DEPTH_FIRST_SEARCH',
     simulationSpeed: 1,
     simulationMode: 'MAZE_GEN',
     simulationFinished: false
@@ -33,7 +33,7 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     case 'ResetSimulation': {
         return {
             ...initialSimulationState,
-            mazeGenerationAlgorithm: state.mazeGenerationAlgorithm
+            selectedAlgorithm: state.selectedAlgorithm
         }
     }
     case 'IncrementSimulationStep': {
@@ -49,10 +49,10 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
             simulationFinished: true
         }
     }
-    case 'SetMazeGeneratingAlgorithm': {
+    case 'SetSelectedAlgorithm': {
         return {
             ...state,
-            mazeGenerationAlgorithm: action.algorithm
+            selectedAlgorithm: action.algorithm
         }
     }
     case 'SetSimulationSpeed': {
@@ -64,7 +64,8 @@ export const simulationReducer: Reducer<SimulationState, SimulationActions> = (
     case 'SetSimulationMode': {
         return {
             ...state,
-            simulationMode: action.simMode
+            simulationMode: action.simMode,
+            selectedAlgorithm: 'DEPTH_FIRST_SEARCH'
         }
     }
     case 'SetFinishedSimulation': {

@@ -52,10 +52,18 @@ export const Terminal: React.FC = () => {
 
 /*
     TODO:
+        proper hosting
+        CI/CD with
         UI/UX
             make sure to disable stuff based on whats generated
+                - solving without a generated maze
+                    should display terminal logs appropriate. (no route found)
+                - running maze gen after quickgen/with step too
+                - quickgen should also work for other algos
         maze gen algos
         maze solve algos
 
         maze saving&loading
+
+        adjustments to ui/ux
 */

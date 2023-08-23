@@ -49,7 +49,7 @@ export const useSimulationService = () => {
     }
 
     const getSimulationAlgorithm = (): MazeGenAlgorithm => {
-        return simulationState.mazeGenerationAlgorithm
+        return simulationState.selectedAlgorithm
     }
 
     const resetSimulation = (): void => {

@@ -1,6 +1,6 @@
 import { Action, bindActionCreators } from 'redux'
 import store from '..'
-import { MazeGenAlgorithm, SimulationMode } from './types'
+import { SimulationMode, Algorithm } from './types'
 
 interface StartSimulationAction extends Action<'StartSimulation'> {}
 
@@ -38,13 +38,13 @@ const finishSimulation = (): FinishSimulationAction => ({
     type: 'FinishSimulation'
 })
 
-interface SetMazeGeneratingAlgorithmAction extends Action<'SetMazeGeneratingAlgorithm'> {
-    type: 'SetMazeGeneratingAlgorithm'
-    algorithm: MazeGenAlgorithm
+interface SetSelectedAlgorithmAction extends Action<'SetSelectedAlgorithm'> {
+    type: 'SetSelectedAlgorithm'
+    algorithm: Algorithm
 }
 
-const setMazeGeneratingAlogrithm = (algorithm: MazeGenAlgorithm): SetMazeGeneratingAlgorithmAction => ({
-    type: 'SetMazeGeneratingAlgorithm',
+const setMazeGeneratingAlogrithm = (algorithm: Algorithm): SetSelectedAlgorithmAction => ({
+    type: 'SetSelectedAlgorithm',
     algorithm
 })
 
@@ -83,7 +83,7 @@ export type SimulationActions = StartSimulationAction
     | ResetSimulationAction
     | IncrementSimulationStepAction
     | FinishSimulationAction
-    | SetMazeGeneratingAlgorithmAction
+    | SetSelectedAlgorithmAction
     | SetSimulationSpeedAction
     | SetSimulationModeAction
     | SetFinishedSimulationAction

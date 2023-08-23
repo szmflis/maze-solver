@@ -45,6 +45,16 @@ export const RawSelect: React.FC<RawSelectProps> = ({
         setIsActive(false)
     }
 
+    const getDisplayName = () => {
+        if (data[selectedOption]) {
+            console.log('got it')
+            return data[selectedOption].display
+        } else {
+            console.log('not got it')
+            return data[0].display
+        }
+    }
+
     return (
         <div ref={containerRef} className={className}>
             <button
@@ -52,7 +62,7 @@ export const RawSelect: React.FC<RawSelectProps> = ({
                 onClick={() => setIsActive(!isActive)}
                 disabled={disabled}
             >
-                {data[selectedOption].display}
+                {getDisplayName()}
                 <RotatingChevron type="chevron" textColor="primary" fontSize={5} isActive={isActive} />
             </button>
             {isActive && (

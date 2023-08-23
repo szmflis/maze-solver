@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { FlexBox } from '../FlexBox/FlexBox'
 import { Option } from '../Select/RawSelect'
 import { Select } from '../Select/Select'
-import { MazeGenAlgorithm } from '../../store/simulation/types'
+import { MazeGenAlgorithm, MazeSolveAlgorithm } from '../../store/simulation/types'
 import { useSimulationService } from '../../hooks/SimulationService'
 
 interface MazeGenAlgorithmOption extends Option {
     value: MazeGenAlgorithm
 }
 
-const ALGORITHM_OPTIONS: MazeGenAlgorithmOption[] = [
+const MAZE_GEN_ALGORITHM_OPTIONS: MazeGenAlgorithmOption[] = [
     {
         value: 'DEPTH_FIRST_SEARCH',
         display: 'Depth First Search'
@@ -20,14 +20,37 @@ const ALGORITHM_OPTIONS: MazeGenAlgorithmOption[] = [
     }
 ]
 
+interface MazeSolveAlgorithmOption extends Option {
+    value: MazeSolveAlgorithm
+}
+
+const MAZE_SOLVE_ALGORITHM_OPTIONS: MazeSolveAlgorithmOption[] = [
+    {
+        value: 'DEPTH_FIRST_SEARCH',
+        display: 'Depth First Search'
+    }
+]
+
 export const AlgorithmSelector: React.FC = () => {
-    const [value1, setValue1] = useState(0)
+    const [selectValue, setSelectValue] = useState(0)
 
     const simulationService = useSimulationService()
 
     useEffect(() => {
-        simulationService.setMazeGeneratingAlgorithm(ALGORITHM_OPTIONS[value1].value)
-    }, [value1])
+        simulationService.setMazeGeneratingAlgorithm(MAZE_GEN_ALGORITHM_OPTIONS[selectValue].value)
+    }, [selectValue])
+
+    const getDataForSelection = () => {
+        console.log('getting dat afor selection, ', simulationService.getSimulationMode())
+        switch (simulationService.getSimulationMode()) {
+        case 'MAZE_GEN': {
+            return MAZE_GEN_ALGORITHM_OPTIONS
+        }
+        case 'MAZE_SOLVE': {
+            return MAZE_SOLVE_ALGORITHM_OPTIONS
+        }
+        }
+    }
 
     return (
         <FlexBox
@@ -35,9 +58,9 @@ export const AlgorithmSelector: React.FC = () => {
             alignItems={'center'}
         >
             <Select
-                data={ALGORITHM_OPTIONS}
-                selectedOption={value1}
-                setSelectedOption={setValue1}
+                data={getDataForSelection()}
+                selectedOption={selectValue}
+                setSelectedOption={setSelectValue}
                 disabled={simulationService.shouldDisableSimulationControls()}
             />
         </FlexBox>
