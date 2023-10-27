@@ -47,10 +47,8 @@ export const RawSelect: React.FC<RawSelectProps> = ({
 
     const getDisplayName = () => {
         if (data[selectedOption]) {
-            console.log('got it')
             return data[selectedOption].display
         } else {
-            console.log('not got it')
             return data[0].display
         }
     }

@@ -41,7 +41,6 @@ export const AlgorithmSelector: React.FC = () => {
     }, [selectValue])
 
     const getDataForSelection = () => {
-        console.log('getting dat afor selection, ', simulationService.getSimulationMode())
         switch (simulationService.getSimulationMode()) {
         case 'MAZE_GEN': {
             return MAZE_GEN_ALGORITHM_OPTIONS

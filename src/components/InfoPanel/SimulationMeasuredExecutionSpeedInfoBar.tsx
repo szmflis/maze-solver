@@ -9,7 +9,7 @@ export const SimulationMeasuredExecutionSpeedInfoBar: React.FC = () => {
 
     return (
         <Paragraph p={1}>
-            Last measured execution speed: <Span
+            Total measured execution speed: <Span
                 textColor='red'
                 fontWeight={'bold'}
             >

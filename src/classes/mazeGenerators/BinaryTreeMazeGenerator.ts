@@ -58,7 +58,6 @@ export class BinaryTreeMazeGenerator implements MazeGenerator {
             this.moveToNextColumn()
         }
         this.logger.movedToStep(this.position)
-        console.log('setting ', this.position, ' to player')
         this.simulationBoard.setCellState(this.position, CellState.PLAYER)
     }
 
