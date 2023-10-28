@@ -20,7 +20,7 @@ export const boardReducer: Reducer<BoardState, BoardActions> = (
     {
         return {
             ...state,
-            board: new Maze(state.boardHeight, state.boardWidth)
+            board: new Maze(state.boardWidth, state.boardHeight)
         }
     }
     case 'ChangeBoardWidth':

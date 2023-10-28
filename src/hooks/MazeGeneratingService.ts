@@ -5,6 +5,7 @@ import { BinaryTreeMazeGenerator } from '../classes/mazeGenerators/BinaryTreeMaz
 import { DepthFirstSearchMazeGenerator } from '../classes/mazeGenerators/DepthFirstSearchMazeGenerator'
 import { useBoardService } from './BoardService'
 import { useSimulationService } from './SimulationService'
+import { HuntAndKillMazeGenerator } from '../classes/mazeGenerators/HuntAndKillMazeGenerator'
 
 export const useMazeGeneratingService = () => {
     const boardService = useBoardService()
@@ -21,6 +22,9 @@ export const useMazeGeneratingService = () => {
             break
         case 'BINARY_TREE':
             setMazeGen(new BinaryTreeMazeGenerator(boardService.getBoard(), entryCoordinate))
+            break
+        case 'HUNT_AND_KILL':
+            setMazeGen(new HuntAndKillMazeGenerator(boardService.getBoard(), entryCoordinate))
             break
         default:
             setMazeGen(new DepthFirstSearchMazeGenerator(boardService.getBoard(), entryCoordinate))

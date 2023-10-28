@@ -4,7 +4,8 @@ import { useSimulationService } from '../../hooks/SimulationService'
 
 export const simulationAlgorithmDescriptionMapper = {
     BINARY_TREE: 'Binary Tree',
-    DEPTH_FIRST_SEARCH: 'Depth-First Search'
+    DEPTH_FIRST_SEARCH: 'Depth-First Search',
+    HUNT_AND_KILL: 'Hunt and Kill'
 }
 
 export const SimulationAlgorithmInfoBar: React.FC = () => {

@@ -17,6 +17,10 @@ const MAZE_GEN_ALGORITHM_OPTIONS: MazeGenAlgorithmOption[] = [
     {
         value: 'BINARY_TREE',
         display: 'Binary Tree'
+    },
+    {
+        value: 'HUNT_AND_KILL',
+        display: 'Hunt and Kill'
     }
 ]
 
