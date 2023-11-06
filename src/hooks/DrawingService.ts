@@ -18,7 +18,6 @@ export const useDrawingService = (props: DrawingServiceProps) => {
 
     const simulationBoard = useSelector<AppState, Maze>((state) => state.boardReducer.board)
 
-    // const simulationBoarwd = useBoardService()
     const [blockSide, setBlockSide] = useState<number>(0)
 
     useEffect(() => {
